@@ -1,3 +1,4 @@
+## Use whatever ide you like (Ian uses Pycharm and Anaconda2 for IDE + Platform) but we need to make sure it works in Cloud9 after we finish each coding assignment as that is what the TA uses to check code.
 ### [Coding assignment for hw1] (https://github.com/txt/ase16/blob/master/doc/hw1.md)
 1. Watch the great [Kent Beck video on how to write a test engine in just a few lines of code](https://www.youtube.com/watch?v=nIonZ6-4nuU). Note
 that that example is in CoffeeScript. For the equivalent Python code, see
