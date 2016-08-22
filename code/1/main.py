@@ -3,8 +3,6 @@ import who1
 import who2
 import who3
 
-from random import randint
-
 
 def is_equal(x, y):
     return x == y
