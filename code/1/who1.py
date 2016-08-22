@@ -12,4 +12,4 @@ def is_equal(x, y):
 @utest.ok
 def _okwho1():
   "Adding another test case to who1.py, is \"__main__\" == __name__"
-  assert is_equal("__main__", __name__), "is name == main equality failure in main test"
+  assert is_equal("__main__", __name__), "is name == main equality failure in who1 test"
