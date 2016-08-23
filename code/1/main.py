@@ -16,6 +16,7 @@ def _okmain():
 @utest.ok
 def _okwho2():
     #Testing who2.getAuthorReverse
+    "Test case to check author name reversed"
     assert who2.getAuthorReverse()=="iruhD tekinA"
 
 
