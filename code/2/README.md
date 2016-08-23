@@ -11,7 +11,7 @@
 - Answer these questions
     - List two things _not_ to do during an active shooter event.
     - List two things _best_ to do during an active shooter event.
-    - 
+
 ## Introductory Python
 
 Read chapters one to four of [Think like a Computer Scientist](http://www.greenteapress.com/thinkpython/html/index.html)
