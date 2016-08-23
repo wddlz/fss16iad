@@ -1,4 +1,4 @@
-#Reading 1
+#Reading 1, Team C
 * [GZoltar: an eclipse plug-in for testing and debugging]  (http://dl.acm.org/citation.cfm?id=2351752)
 
 1. *Reading*
