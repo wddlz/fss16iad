@@ -18,7 +18,11 @@ def _okwho2():
     #Testing who2.getAuthorReverse
     "Test case to check author name reversed"
     assert who2.getAuthorReverse()=="iruhD tekinA"
-
+    
+@utest.ok
+def _okwho3():
+  "Test case for filename who3.py"
+  assert who3.this_file() == "who3.py"
 
 
 if __name__ == "__main__":
