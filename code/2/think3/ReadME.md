@@ -1,4 +1,4 @@
-Chapter 3 exercise 1-5 screenshots in the "screenshots" folder
+Chapter 3 exercise 1-5 screenshots
 
 ![ex1](https://github.com/wddlz/fss16iad/blob/master/code/2/think3/screenshots/exercise_1.png)
 ![ex2](https://github.com/wddlz/fss16iad/blob/master/code/2/think3/screenshots/exercise_2.png)
