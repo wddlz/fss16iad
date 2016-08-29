@@ -1,4 +1,4 @@
-# fss16iad, Team C, Code 2
+# fss16iad, Team C, Code 2 (answers in each folder)
 ## Active Shooter Exercise.
 
 - Watch the video
