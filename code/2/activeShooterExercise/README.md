@@ -1,5 +1,4 @@
-# fss16iad
-Active shooter answers here
+# Active shooter exercise answers...
 
 Things not to do during an active shooter event:
 
