@@ -19,6 +19,7 @@ The following are the possible hands in poker, in increasing order of value (and
     + five cards in sequence (as defined above) and with the same suit
 
 The goal of these exercises is to estimate the probability of drawing these various hands.
+
 1. Download the following files from http://thinkpython.com/code:
   + **Card.py**
     + : A complete version of the Card, Deck and Hand classes in this chapter.
