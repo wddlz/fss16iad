@@ -1,5 +1,34 @@
 # fss16iad, Team C, Code 3
 ### Exercise 6 Poker
+
+###Part 1,2,3,4 (build hands and classify them)###
+![screen1pt1](https://github.com/wddlz/fss16iad/blob/master/code/3/Poker/screenshots/ThreeAndFour1.PNG)
+![screen1pt2](https://github.com/wddlz/fss16iad/blob/master/code/3/Poker/screenshots/ThreeAndFour2.PNG)
+
+###Part 4,5 (get probabilities of hand scores)###
+![screen2pt1](https://github.com/wddlz/fss16iad/blob/master/code/3/Poker/screenshots/FiveAndSix1.PNG)
+***Ratios to reach*** (from https://en.wikipedia.org/wiki/Poker_probability)
++ Target for 5 per hand:
+  + straight flush (72,192:1 || 0.00139%)
+  + four of a kind (4,164:1 || 0.024%)
+  + full house (693:1 || 0.1441%)
+  + flush (508:1 || 0.1965%)
+  + straight (254:1 || 0.3925%)
+  + three of a kind (46.3:1 || 2.1128%)
+  + two pair (20:1 || 4.7539%)
+  + pair (1.37:1 || 42.2569%)
++ Target for 7 per hand:
+  + straight flush (3,589.6:1 || 0.0279%)
+  + four of a kind (594:1 || 0.168%)
+  + full house (37.5:1 || 2.60%)
+  + flush (32.1:1 || 3.03%)
+  + straight (20.6:1 || 4.62%)
+  + three of a kind (19.7:1 || 4.83%)
+  + two pair (3.26 || 23.5%)
+  + pair (1.28:1 || 43.8%)
+
+***From assignment text***
+
 The following are the possible hands in poker, in increasing order of value (and decreasing order of probability):
   + **pair:**
     + two cards with the same rank
