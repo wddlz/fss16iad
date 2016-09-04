@@ -202,11 +202,14 @@ if __name__ == '__main__':
     print "----------------------------"
     print "Dealing %s hands of %s cards" % (str(hand_amount), str(card_amount))
     print "----------------------------"
-    # deal the cards and classify the hands
     """
     This is the first part of the Poker exercise, commented for the statistics part as printing thousands of hands
     is unreadable. If you want to see the hands work, uncomment this code and comment the statistics code below
     """
+    # # make a deck (a new one for each run so don't run out of cards in the deck)
+    # deck = Deck()
+    # deck.shuffle()
+    # deal the cards and classify the hands
     # for i in range(hand_amount):
     #     print "HAND %s" % (i + 1)
     #     hand = PokerHand()
@@ -224,6 +227,7 @@ if __name__ == '__main__':
     #     print "Pair: " + str(hand.has_pair())
     #     print "Highest class: " + hand.highest_class
     #     print "----------------------------"
+
     """
     STATISTICS CODE
     Target for 5 per hand:
