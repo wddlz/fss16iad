@@ -1,4 +1,5 @@
-# coding=utf-8
+# -*- coding: utf-8 -*-
+# !/usr/bin/python
 """This module contains code from
 Think Python by Allen B. Downey
 http://thinkpython.com
