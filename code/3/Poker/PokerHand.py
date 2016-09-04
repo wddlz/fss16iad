@@ -179,9 +179,6 @@ class PokerHand(Hand):
 
 
 if __name__ == '__main__':
-    # make a deck
-    deck = Deck()
-    deck.shuffle()
     card_amount = 0
     hand_amount = 0
     # Card.py hard-codes that there is only 1 deck of 52 cards, So hands must adhere to limited cards
@@ -199,7 +196,7 @@ if __name__ == '__main__':
             print "Please choose a valid integer: "
             sys.stdout.flush()
 
-    hand_amount = 52 / card_amount
+    hand_amount = 52 // card_amount  # double slash for integer division
     # print "\nDealing %s cards\n" % str(card_amount)
     # calculate possible hand amount
     print "----------------------------"
@@ -261,22 +258,41 @@ if __name__ == '__main__':
             sys.stdout.flush()
     print "%s games being played..." % run_amount
     stats_dict = {"straight flush": 0, "four of a kind": 0, "full house": 0, "flush": 0, "straight": 0,
-                  "three of a kind": 0, "two pair": 0, "pair": 0, "high card": 0}
-    while run_amount > 0:
+                  "three of a kind": 0, "two pair": 0, "pair": 0}
+    anti_counter = run_amount
+    while anti_counter > 0:
+        # make a deck (a new one for each run so don't run out of cards in the deck)
+        deck = Deck()
+        deck.shuffle()
         for i in range(hand_amount):
-            print "HAND %s" % (i + 1)
             hand = PokerHand()
             deck.move_cards(hand, card_amount)
             hand.sort()
-            print hand
-            print "...Hand has..."
-            print "Straight flush: " + str(hand.has_straight_flush())
-            print "Four of a kind:  " + str(hand.has_four())
-            print "Full house: " + str(hand.has_full_house())
-            print "Flush: " + str(hand.has_flush())
-            print "Straight: " + str(hand.has_straight())
-            print "Three of a kind: " + str(hand.has_three())
-            print "Two pairs: " + str(hand.has_two_pair())
-            print "Pair: " + str(hand.has_pair())
-            print "Highest class: " + hand.highest_class
-            print "----------------------------"
+            if hand.has_straight_flush():
+                stats_dict["straight flush"] += 1
+            if hand.has_four():
+                stats_dict["four of a kind"] += 1
+            if hand.has_full_house():
+                stats_dict["full house"] += 1
+            if hand.has_flush():
+                stats_dict["flush"] += 1
+            if hand.has_straight():
+                stats_dict["straight"] += 1
+            if hand.has_three():
+                stats_dict["three of a kind"] += 1
+            if hand.has_two_pair():
+                stats_dict["two pair"] += 1
+            if hand.has_pair():
+                stats_dict["pair"] += 1
+            # if hand.highest_class == "high card":
+            #     stats_dict["high card"] += 1  # all hands have high card, so this is for an "else"
+        anti_counter -= 1
+    total = hand_amount * run_amount
+    print "---------"
+    print stats_dict
+    print "---------"
+    for sd in stats_dict:
+        percentage = stats_dict[sd] / total
+        ratio = total / stats_dict[sd]
+        print sd + " : " + str(ratio) + " to 1 || " + str(percentage * 100) + "%"
+    print str(total) + " hands analyzed"
