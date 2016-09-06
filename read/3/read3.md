@@ -4,18 +4,18 @@
 1. *Reading*
   + Abreu R, Zoeteweij P, Golsteijn R, Van Gemund AJC. 2009. A practical evaluation of spectrum-based fault localization. Journal of Systems and Software. 82(11):1780–1792.
 2. *Keywords*
-  1. **Test data analysis**: a
-  2. **Software fault diagnosis**: t
-  3. **Program spectra**: s
-  4. **Real-time and embedded systems**: t
+  1. **Test data analysis**: the inspecting, cleaning, transforming, and modeling of test data so useful conclusions can be made. This test data is generated from test cases being executed by a system. The output is then analyzed for finding failures in the system.
+  2. **Software fault diagnosis**: finding the causes of faults in software. The goal is to monitor the software and detect when a fault occurs. When a fault is detected its cause and the location of that cause is found, diagnosing the fault in the software.
+  3. **Program spectra**: a distribution of an aspect of a program's run-time behavior. This could be the distribution of all the different paths through the code each execution takes.
+  4. **Real-time and embedded systems**: a real-time system is a system subject to real-time constraints. This system must respond to an event within a deadline specified for the system and do so correctly. Embedded systems usually have real-time constraints and are embedded in a device in which the embedded system provides a dedicated and specific function.
 3. *Notes (4 of 19)*
-  1. **Motivation**: S.
-  2. **Sampling procedures**: T.
-  3. **Related work**: A
-  4. **Future work**: I
+  1. **Motivation**: the testing and debugging process is a major cost in the software development cycle. The reason debugging is such a major cost is that diagnosing faults is a very labor-intensive and manual task. The authors posit spectrum-based fault localization (SFL) as a way to more efficiently diagnose faults through automation. SFL can reduce fault localization effort which then reduces the cost of the testing and debugging process.
+  2. **Baseline results**: the paper uses a common benchmark (the "Siemens set" and the "space" program) which is easily available for others to run their tools to compare their results with spectrum-based fault localization's results. The Siemens set is a collection of benchmark faults in several C programs and the "space" program has a set of faults in a large program. These sets of programs and the results of SFL against these programs is presented in the paper. Fault diagnosis rates of around 80% are given, which means only 20% of the code needs to be manually searched for the fault.
+  3. **Related work**: the paper lists several related works. Program spectra were introduced in 2000 to diagnose bugs due to the year 2000. Several practical debugging tools like Pinpoint were mentioned that are based on SFL. The Tarantula tool (also mentioned in the GZoltar and VIDA papers) works with statement hit spectra and is compared to SFL results (and is seen as a variant of SFL). Finally white box and black box diagnosis techniques were discussed. SFL lends itself to a black box classification, similar to Nearest Neighbor and dynamic program slicing.
+  4. **Future work**: the authors plan to study the "influence of the granularity (statement, function level) of a program spectra on the diagnostic accuracy of spectrum-based fault localization". That is, the distribution of aspects of the program's run-time behavior. The authors would also like to investigate improving accuracy of fault localization through integrating static and dynamic program slicing. Finally the authors would like to extend SFL to multiple-fault cases, rather than just single faults.
 4. *Needs improvement*
   1. A?
   2. S
   3. P
 5. *Connection to other papers*
-  1. **Connection to GZoltar**: T
+  1. **Connection to GZoltar**: This paper is cited by both the GZoltar paper and the VIDA paper. Both of these papers are about a system that attempts to automate testing and debugging. This paper is cited by both because it presents a method to localize faults which is required to automate debugging. Spectrum-based fault localization is presented as a way to shorten the testing and debugging cycle by reducing the work needed to debug a system. GZoltar uses spectrum-based fault localization for test suite minimization and automatic fault diagnosis as spectrum-based fault localization is seen as one of the best methods to use for fault localization.
