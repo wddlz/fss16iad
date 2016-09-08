@@ -1,5 +1,4 @@
-# [MINTS: A general framework and tool for supporting test-suite minimization
-](http://dl.acm.org/citation.cfm?id=1555056)
+# [MINTS: A general framework and tool for supporting test-suite minimization](http://dl.acm.org/citation.cfm?id=1555056)
 [How to summarize papers](https://github.com/txt/fss16/blob/master/doc/reading12345678.md)
 * By summarize parts we mean write 250 to 500 words on text:
   1. Starting with a clear reference to the paper.
