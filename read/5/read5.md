@@ -1,4 +1,4 @@
-#Reading 4, Team C
+#Reading 5, Team C
 * [Test case purification for improving fault localization](http://dl.acm.org/citation.cfm?id=2635906)
 
 1. *Reading*
