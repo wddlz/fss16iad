@@ -1,4 +1,4 @@
-# [Now we need a work that cites GZoltar](http://dl.acm.org/citation.cfm?id=1555056)
+# [Test case purification for improving fault localization](http://dl.acm.org/citation.cfm?id=2635906)
 [How to summarize papers](https://github.com/txt/fss16/blob/master/doc/reading12345678.md)
 * By summarize parts we mean write 250 to 500 words on text:
   1. Starting with a clear reference to the paper.
