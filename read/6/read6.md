@@ -1,4 +1,4 @@
-#Reading 5, Team C
+#Reading 6, Team C
 * [DynaMoth: dynamic code synthesis for automatic program repair](http://dl.acm.org/citation.cfm?id=2896931)
 
 1. *Reading*
