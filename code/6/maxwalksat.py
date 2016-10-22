@@ -3,13 +3,13 @@ import sys
 import math
 import random
 import time
-
+from model.schaffer import Schaffer
 from model.osyczka2 import Osyczka2
 from model.kursawe import Kursawe
 sys.dont_write_bytecode = True
 
 MAX_TRIES = 15;
-MAX_CHANGES = 50;
+MAX_CHANGES = 75;
 P = 0.5
 
 """
@@ -81,6 +81,9 @@ def dec_mutate(m, soln, i):
             d = m.decisions[i].high
     return d
 
+"""
+Prints to the same line
+"""
 def say(x):
     sys.stdout.write(str(x))
     sys.stdout.flush()
