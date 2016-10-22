@@ -1,4 +1,4 @@
-#Reading 7, Team C
+#Reading 8, Team C
 * [Practitioners' expectations on automated fault localization](http://dl.acm.org/citation.cfm?id=2931051)
 
 1. *Reading*
