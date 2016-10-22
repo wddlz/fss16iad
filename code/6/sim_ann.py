@@ -121,5 +121,5 @@ def say(x):
 	@param: string to be printed
 	@return: None
 	"""
-    sys.stdout.write(str(x))
-    sys.stdout.flush()
+	sys.stdout.write(str(x))
+	sys.stdout.flush()
