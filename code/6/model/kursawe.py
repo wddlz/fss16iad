@@ -22,11 +22,11 @@ def obj_one(s):
 	return total
 
 def obj_two(s):
-	a = 1
+	a = 0.8
 	b = 1
 	total = 0
 	for i in xrange(len(s)):
-		term1 = abs((s[i])**a)
+		term1 = abs(s[i])**a
 		term2 = 5 * math.sin((s[i])**b)
 		value = term1 + term2
 		total += value
