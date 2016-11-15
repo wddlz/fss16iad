@@ -42,7 +42,7 @@ def dummy_eval(p):
 		total += dec
 	return total
 
-creator.create("Fitness", base.Fitness, weights=(1.0,))
+creator.create("Fitness", base.Fitness, weights=(1.0, -1.0, 1.0))
 creator.create("Individual", list, fitness=creator.Fitness)
 
 toolbox = base.Toolbox()
@@ -53,3 +53,5 @@ toolbox.register("population", tools.initRepeat, list, toolbox.gen_one)
 pop = toolbox.population(n=pop_size)
 for p in pop:
 	print p
+
+print dir(pop[0])
