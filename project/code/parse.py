@@ -1,6 +1,9 @@
 import sys
+import os,subprocess
+import logging,uuid
 
 DEBUG= True
+steps= 400
 
 class Parse():
     """
@@ -9,8 +12,11 @@ class Parse():
 
     To get the parse output call __str__ or get_output which gives output in JSON format
     """
+
+    #return is format for get_output (status['purchase'],status['utility'],status['time'])
+
     matrix=[]
-    purchase = 'no'
+    purchase = 0
     time = sys.maxint
     utility = -sys.maxint-1
 
@@ -39,7 +45,8 @@ class Parse():
 
     def get_output(self):
         status={'time' : self.time, 'purchase':self.purchase , 'utility':self.utility }
-        return status
+        return int(status['purchase']),int(status['utility']),int(status['time'])
+	
 
     def __str__(self):
         return str(self.get_output())
@@ -54,20 +61,40 @@ class Parse():
         return m[last_row]
 
     def get_purchase(self):
-        self.purchase ='yes' if self.get_last_row()[0] == '[PURCHASE]' else 'no'
+        self.purchase =1 if self.get_last_row()[0] == '[PURCHASE]' else 0
 
     def get_time (self) :
         #if purchase was made get the time of purchase
-        if self.purchase == 'yes':
+        if self.purchase == 1:
             self.time = self.get_last_row()[1]
 
     def get_utility (self) :
         #if purchase was made utility of last cbid or bid (whichever was made before)
-        if self.purchase == 'yes':
+        if self.purchase == 1:
             m=self.get_matrix()
             for i in xrange((len(m)-1), -1, -1): # Efficient to parse list from last
                 if m[i][0] == '[CBID]' :  self.utility = m[i][10] ; return ;
                 if m[i][0] == '[BID]' : self.utility = m[i][3] ; return ;
+
+def call_prism(prism_path,const):
+	global steps
+	model_file = "negotiation.pm"
+	param1 = "-simpath"
+	param2 = str(steps)
+	const_list = ["B_RP", "S_RP", "B_IP", "S_IP", "Tb", "TbB", "Ts", "TsB", "bCinc", "bBinc", "sCdec", "sBdec", "Kb", "Ks","Offset"]	
+	const_param = " ".join(["--const "+i+"="+str(j) for i,j in zip(const_list,const)])
+	output_filename = "prism_output/sample_"+str(uuid.uuid4())+".txt"
+	
+	prism_command = " ".join([prism_path,model_file,param1,param2,output_filename,const_param])
+
+	logging.debug(prism_command)
+	try:	
+		FNULL = open(os.devnull, 'w')
+		subprocess.call(prism_command , shell=True,stdout= FNULL)
+		return output_filename
+	except :
+		print "Exiting .. Check logs"
+		sys.exit()
 
 if __name__=='__main__':
 
