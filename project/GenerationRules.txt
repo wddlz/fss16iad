@@ -1,0 +1,6 @@
+1) bid range is generated with [B_IP..B_RP]
+    so B_IP must be < B_RP
+2) cbid range is generated with [S_RP..S_IP]
+    so S_RP must be < S_IP
+3) Model in general sets B_IP (buyer initial price) to S_RP (seller reserved price) and S_IP to B_RP
+4) Tb (buyer deadline) and Ts (seller deadline) must be > 0 (range is 0 to Tb,Ts)
