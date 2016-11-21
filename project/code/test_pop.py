@@ -27,7 +27,11 @@ Ks = (8,9)
 Offset = (10000,15000)
 
 prism_path = "/home/adhuri/prism-4.3.1-linux64/bin/prism"
-pop_size = 5
+pop_size = 8
+
+NGEN=10
+CXPB=0.2
+MUTPB=0.01
 
 def aop_decs():
 	b_rp = random.randint(B_RP[0], B_RP[1])
@@ -46,7 +50,7 @@ def aop_decs():
 	return [b_rp, s_rp, s_rp, b_rp, tb, tbb, ts, tsb, bcinc, bbinc, scdec, sbdec,  kb, ks, offset]
 
 
-creator.create("Fitness", base.Fitness, weights=(4.0, -1.0, 1.0))
+creator.create("Fitness", base.Fitness, weights=(4.0, -1.0, 1.0),crowding_dist=None)
 creator.create("Individual", list, fitness=creator.Fitness)
 
 toolbox = base.Toolbox()
@@ -82,41 +86,49 @@ def evaluateInd(individual):
 
 toolbox.register("mate", tools.cxTwoPoint)
 toolbox.register("mutate", tools.mutUniformInt, low = 0 , up = 1, indpb=0.01)
-toolbox.register("select", tools.selTournament,tournsize=4)
+toolbox.register("select", tools.selNSGA2)
 toolbox.register("evaluate", evaluateInd)
 
-NGEN=10
-CXPB=0.2
-MUTPB=0.01
 
-for g in range(NGEN):
-    # Select the next generation individuals
-    offspring = toolbox.select(pop, len(pop))
-    #print offspring
-    # Clone the selected individuals
-    offspring = map(toolbox.clone, offspring)
+NGEN = 5
+MU = 8
+CXPB = 0.9
 
-    # Apply crossover on the offspring
-    for child1, child2 in zip(offspring[::2], offspring[1::2]):
-        if random.random() < CXPB:
-            toolbox.mate(child1, child2)
-            del child1.fitness.values
-            del child2.fitness.values
-
-    # Apply mutation on the offspring
-    for mutant in offspring:
-        if random.random() < MUTPB:
-            toolbox.mutate(mutant)
-            del mutant.fitness.values
-
+# Evaluate individuals with invalid fitness
+if ( 1 == 1):
     # Evaluate the individuals with an invalid fitness
-    invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
+    invalid_ind = [ind for ind in pop if not ind.fitness.valid]
     fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
     for ind, fit in zip(invalid_ind, fitnesses):
         ind.fitness.values = fit
-    logging.info("Offspring : "+str(offspring))		
-    # The population is entirely replaced by the offspring
-    pop[:] = offspring
+
+#print [(ind.fitness.values, i) for i, ind in enumerate(individuals)]
+
+ # Begin the generational process
+if ( 1 == 1):
+    for gen in range(1, NGEN):
+        # Vary the population
+        offspring = tools.selTournamentDCD(pop, len(pop))
+        offspring = [toolbox.clone(ind) for ind in offspring]
+        
+        for ind1, ind2 in zip(offspring[::2], offspring[1::2]):
+            if random.random() <= CXPB:
+                toolbox.mate(ind1, ind2)
+            
+            toolbox.mutate(ind1)
+            toolbox.mutate(ind2)
+            del ind1.fitness.values, ind2.fitness.values
+        
+        # Evaluate the individuals with an invalid fitness
+        invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
+        fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
+        for ind, fit in zip(invalid_ind, fitnesses):
+            ind.fitness.values = fit
+
+        # Select the next generation population
+        pop = toolbox.select(pop + offspring, MU)
+	print pop
+
 
 print "Final Population"
 for p in  pop:
