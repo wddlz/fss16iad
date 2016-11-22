@@ -129,7 +129,7 @@ def main(seed=None):
     NGEN = 10       # Generation
     MU = 40         # Population Size
     CXPB = 0.9
-
+	
     stats = tools.Statistics(lambda ind: ind.fitness.values)
     stats.register("avg", numpy.mean, axis=0)
     stats.register("std", numpy.std, axis=0)
@@ -141,6 +141,9 @@ def main(seed=None):
     
     pop = toolbox.population(n=MU)
     
+    print ("Algorithm = NSGA2")
+    print "Generation = ",NGEN
+    print "Population Size = ",MU
     	
     print ("Initial Population")
     for p in pop:
