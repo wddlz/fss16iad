@@ -7,8 +7,9 @@ import logging
 import parse
 import json
 import array
-
+from contextlib import contextmanager
 import numpy
+import time
 
 from math import sqrt
 
@@ -40,7 +41,16 @@ Ks = (8,9)
 Offset = (10000,15000)
 
 prism_path = "/home/adhuri/prism-4.3.1-linux64/bin/prism"
-pop_size = 8
+#pop_size = 8
+
+@contextmanager
+def duration():
+  t1 = time.time()
+  yield
+  t2 = time.time()
+  print("\n" + "-" * 72)
+  print("# Runtime: %.3f secs" % (t2-t1))
+
 
 def ok(decs):
     if(decs[2] >= decs[0]):return False     #B_IP >= B_RP
@@ -83,11 +93,8 @@ toolbox.register("decs", aop_decs)
 toolbox.register("gen_one", tools.initIterate, creator.Individual, toolbox.decs)
 toolbox.register("population", tools.initRepeat, list, toolbox.gen_one)
 
-pop = toolbox.population(n=pop_size)
+#pop = toolbox.population(n=pop_size)
 
-print ("Initial Population")
-for p in pop:
-	print p
 
 def prism(individual):
 	global prism_path
@@ -114,63 +121,13 @@ toolbox.register("mutate", tools.mutUniformInt, low = 0 , up = 1, indpb=0.01)
 toolbox.register("select", tools.selNSGA2)
 toolbox.register("evaluate", evaluateInd)
 
-"""
-NGEN = 5
-MU = 8
-CXPB = 0.9
-
-# Evaluate individuals with invalid fitness
-if ( 1 == 1):
-    # Evaluate the individuals with an invalid fitness
-    invalid_ind = [ind for ind in pop if not ind.fitness.valid]
-    fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
-    for ind, fit in zip(invalid_ind, fitnesses):
-        ind.fitness.values = fit
-
-#print [(ind.fitness.values, i) for i, ind in enumerate(individuals)]
-
- # Begin the generational process
-if ( 1 == 1):
-    for gen in range(1, NGEN):
-        # Vary the population
-        offspring = tools.selTournamentDCD(pop, len(pop))
-        offspring = [toolbox.clone(ind) for ind in offspring]
-        
-        for ind1, ind2 in zip(offspring[::2], offspring[1::2]):
-            if random.random() <= CXPB:
-                toolbox.mate(ind1, ind2)
-            
-            toolbox.mutate(ind1)
-            toolbox.mutate(ind2)
-            del ind1.fitness.values, ind2.fitness.values
-        
-        # Evaluate the individuals with an invalid fitness
-        invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
-        fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
-        for ind, fit in zip(invalid_ind, fitnesses):
-            ind.fitness.values = fit
-
-        # Select the next generation population
-        pop = toolbox.select(pop + offspring, MU)
-	print pop
-
-
-print "Final Population"
-for p in  pop:
-	print p , p.fitness.values
-
-#print dir(pop[0])
-
-"""
-
-
 
 
 def main(seed=None):
     random.seed(seed)
 
-    NGEN = 8
-    MU = 24
+    NGEN = 10       # Generation
+    MU = 40         # Population Size
     CXPB = 0.9
 
     stats = tools.Statistics(lambda ind: ind.fitness.values)
@@ -183,7 +140,11 @@ def main(seed=None):
     logbook.header = "gen", "evals", "std", "min", "avg", "max"
     
     pop = toolbox.population(n=MU)
-
+    
+    	
+    print ("Initial Population")
+    for p in pop:
+	print p
     # Evaluate the individuals with an invalid fitness
     invalid_ind = [ind for ind in pop if not ind.fitness.valid]
     fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
@@ -234,7 +195,8 @@ if __name__ == "__main__":
     # Use 500 of the 1000 points in the json file
     # optimal_front = sorted(optimal_front[i] for i in range(0, len(optimal_front), 2))
     
-    pop, stats = main()
+    with duration():
+        pop, stats = main()
 
 
     
