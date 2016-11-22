@@ -38,7 +38,9 @@ class Parse():
 
     def get_matrix(self):
         if self.matrix == []:
-            print ("Matrix is empty ..Exiting ")
+             
+	    logging.debug("Matrix was empty")
+            #print ("Matrix is empty ..Exiting ")
             #sys.exit(1)
 
         else :
@@ -58,7 +60,7 @@ class Parse():
         None if no purchased row
         """
         m=self.get_matrix()
-	if m == [] : return ['-']
+	if m == [] or m == None : return ['-']
         last_row=len(m)-1
         return m[last_row]
 
