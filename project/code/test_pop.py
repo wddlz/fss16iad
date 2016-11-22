@@ -42,8 +42,23 @@ Offset = (10000,15000)
 prism_path = "/home/adhuri/prism-4.3.1-linux64/bin/prism"
 pop_size = 8
 
+def ok(decs):
+    if(decs[2] >= decs[0]):return False     #B_IP >= B_RP
+    if(decs[1] >= decs[3]):return False     #S_RP >= S_IP
+    if(decs[4] <= 0):return False           #Tb <= 0
+    if(decs[6] <= 0):return False           #Ts <= 0
+    if(decs[5] >= decs[4]):return False     # TbB >= Tb
+    if(decs[7] >= decs[6]):return False     #TsB >= Ts
+
+    return True
 
 def aop_decs():
+    decs = gen_decs()
+    while not ok(decs):
+        decs = gen_decs
+    return decs
+
+def gen_decs():
 	b_rp = random.randint(B_RP[0], B_RP[1])
 	s_rp = random.randint(S_RP[0], S_RP[1])
 	tb = random.randint(Tb[0], Tb[1])
@@ -239,4 +254,3 @@ if __name__ == "__main__":
     plt.xlabel('time', fontsize=18)
     plt.ylabel('utility', fontsize=16)
     plt.show()
-
