@@ -106,10 +106,7 @@ def prism(individual):
 		return evaluated_results
 	else:
 		return (0,0,0)
-	"""
-	print "Print",individual
-	return (random.randint(0,1),random.randint(0,2000),random.randint(0,2000))
-	"""
+
 
 def evaluateInd(individual):
     # Do some computation
@@ -121,7 +118,7 @@ def evaluateInd(individual):
 
 toolbox.register("mate", tools.cxTwoPoint)
 toolbox.register("mutate", tools.mutUniformInt, low = 0 , up = 1, indpb=0.01)
-toolbox.register("select", tools.selNSGA2)
+toolbox.register("select", tools.selSPEA2)
 toolbox.register("evaluate", evaluateInd)
 
 
@@ -129,8 +126,8 @@ toolbox.register("evaluate", evaluateInd)
 def main(seed=None):
     random.seed(seed)
 
-    NGEN = 100       # Generation
-    MU = 100      # Population Size
+    NGEN = 8       # Generation
+    MU = 40       # Population Size
     CXPB = 0.9
 	
     stats = tools.Statistics(lambda ind: ind.fitness.values)
@@ -144,7 +141,7 @@ def main(seed=None):
     
     pop = toolbox.population(n=MU)
     
-    print ("Algorithm = NSGA2")
+    print ("Algorithm = SPEA2")
     print "Generation = ",NGEN
     print "Population Size = ",MU
     	
