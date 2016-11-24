@@ -38,8 +38,11 @@ class Parse():
 
     def get_matrix(self):
         if self.matrix == []:
-            print ("Matrix is empty ..Exiting ")
-            sys.exit(1)
+             
+	    logging.debug("Matrix was empty")
+            #print ("Matrix is empty ..Exiting ")
+            #sys.exit(1)
+
         else :
             return self.matrix
 
@@ -57,6 +60,7 @@ class Parse():
         None if no purchased row
         """
         m=self.get_matrix()
+	if m == [] or m == None : return ['-']
         last_row=len(m)-1
         return m[last_row]
 
@@ -72,6 +76,7 @@ class Parse():
         #if purchase was made utility of last cbid or bid (whichever was made before)
         if self.purchase == 1:
             m=self.get_matrix()
+	    if m == []: return
             for i in xrange((len(m)-1), -1, -1): # Efficient to parse list from last
                 if m[i][0] == '[CBID]' :  self.utility = m[i][10] ; return ;
                 if m[i][0] == '[BID]' : self.utility = m[i][3] ; return ;
