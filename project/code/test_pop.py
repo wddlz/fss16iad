@@ -19,8 +19,12 @@ from deap import benchmarks
 from deap.benchmarks.tools import diversity, convergence#, hypervolume
 from deap import creator
 from deap import tools
+import matplotlib.pyplot as plt
+import numpy
 
-
+calls = 0 
+hits = 0
+hashmap={}
 
 logging.basicConfig(filename='project.log',filemode='w',format='%(asctime)s [%(filename)s:%(lineno)s - %(funcName)s() ] : %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.DEBUG)
 
@@ -97,25 +101,52 @@ toolbox.register("population", tools.initRepeat, list, toolbox.gen_one)
 
 
 def prism(individual):
-	global prism_path
-	filename = parse.call_prism(prism_path,individual)
-	evaluated_results =parse.Parse(filename).get_output()
-	#print evaluated_results
-	logging.debug (filename +" : "+ str(evaluated_results))
-	if evaluated_results:
-		return evaluated_results
-	else:
-		return (0,0,0)
-	"""
-	print "Print",individual
-	return (random.randint(0,1),random.randint(0,2000),random.randint(0,2000))
-	"""
+	
+	
+	#Testing prism call 
+	global hashmap,calls,hits
+	# Empty individual decisions
+	calls += 1
+
+	if individual == []:return 0,0,0
+	
+	#Create string
+	string = repr(individual)
+	
+	try:
+		# Put in hashmap
+		if hashmap[string]:
+			print string, " already in hashmap "
+			hits +=1 
+			return hashmap[string]
+
+	except:
+		print string , " adding in hashmap "
+		
+		"""
+		global prism_path
+		filename = parse.call_prism(prism_path,individual)
+		evaluated_results =parse.Parse(filename).get_output()
+		print evaluated_results
+
+		logging.debug (filename +" : "+ str(evaluated_results))
+		"""
+		
+		#Simulate evaluate results
+		evaluated_results = (1,random.random(),random.random())
+	
+		if evaluated_results:
+			hashmap[string] = evaluated_results
+		else:
+			hashmap[string] = (0,0,0)
+
+		return hashmap[string] 
 
 def evaluateInd(individual):
     # Do some computation
 	#print "Individual", individual;
 	return prism(individual)
-	#return random.randint(0,4),random.randint(0,4),random.randint(0,4)
+	#return (1,random.randint(0,4),random.randint(0,4))
 
 
 
@@ -126,11 +157,11 @@ toolbox.register("evaluate", evaluateInd)
 
 
 
-def main(seed=None):
+def main_nsga2(seed=None,NGEN=100,MU=100):
     random.seed(seed)
 
-    NGEN = 100       # Generation
-    MU = 100      # Population Size
+    #NGEN       # Generation
+    #MU     # Population Size
     CXPB = 0.9
 	
     stats = tools.Statistics(lambda ind: ind.fitness.values)
@@ -194,31 +225,81 @@ def main(seed=None):
     #print("Final population hypervolume is %f" % hypervolume(pop, [11.0, 11.0]))
 
     return pop, logbook
-        
-if __name__ == "__main__":
-    # with open("pareto_front/zdt1_front.json") as optimal_front_data:
-    #     optimal_front = json.load(optimal_front_data)
-    # Use 500 of the 1000 points in the json file
-    # optimal_front = sorted(optimal_front[i] for i in range(0, len(optimal_front), 2))
-    
-    with duration():
-        pop, stats = main()
 
 
+def plotGraph(pop):
+
     
-    import matplotlib.pyplot as plt
-    import numpy
-    
-    print " Final Population "
-    for i in pop :
-	print i,i.fitness.values
-    	   
+    #plotGraph
+
+
     front = numpy.array([ind.fitness.values for ind in pop if ind.fitness.values[0]== 1 ])
     #optimal_front = numpy.array(pop)
     #plt.scatter(optimal_front[:,0], optimal_front[:,1], c="r")
     #plt.scatter(front[:,0], front[:,1], c="b")
+
+    if front == []:
+	print "Nothing to plot"
+	sys.exit()   
+    #print "Front ",front
     plt.scatter(front[:,2] , front[:,1],c=front[:,0])
     plt.axis("tight")
     plt.xlabel('time', fontsize=18)
     plt.ylabel('utility', fontsize=16)
     plt.show()
+    
+
+def plotHitRatio(algorithm,main):
+
+    global hits,calls
+    x_axis = []
+    y_axis = []
+    for i in xrange(0,300,10):
+	p,s = main(1,i,100)  
+    	hit_ratio = 0
+    	if calls != 0 :
+		hit_ratio = float(hits) / calls
+
+    	#print "Hit ratio ", hit_ratio
+	
+	x_axis.append(i)
+	y_axis.append(hit_ratio)
+
+
+	#Reset Counter
+	hits =0
+	calls=0
+    with open("hit_ratio.txt", "w") as myfile:
+    	myfile.write(algorithm+":"+repr(x_axis)+":"+repr(y_axis)+"\n")	
+
+    """
+    plt.plot(x_axis,y_axis,'ro-')
+    plt.axis("tight")
+    plt.xlabel('Generations', fontsize=18)
+    plt.ylabel('Cache Hit Ratio', fontsize=16)
+    plt.show()
+    """
+
+    
+if __name__ == "__main__":
+ 
+
+
+    plotHitRatio("NSGA2",main_nsga2)
+    with duration():
+        pop, stats = main_nsga2()
+
+
+    
+    
+    print " Final Population "
+    for i in pop :
+	print i,i.fitness.values
+
+
+
+    print "Total Calls ", calls
+    print "Hit Count" , hits
+
+    plotGraph(pop)
+

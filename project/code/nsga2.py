@@ -101,7 +101,7 @@ toolbox.register("population", tools.initRepeat, list, toolbox.gen_one)
 
 
 def prism(individual):
-	
+	simulatePrism = True
 	
 	#Testing prism call 
 	global hashmap,calls,hits
@@ -116,24 +116,25 @@ def prism(individual):
 	try:
 		# Put in hashmap
 		if hashmap[string]:
-			print string, " already in hashmap "
+			#print string, " already in hashmap "
 			hits +=1 
 			return hashmap[string]
 
 	except:
-		print string , " adding in hashmap "
+		#print string , " adding in hashmap "
 		
-		"""
-		global prism_path
-		filename = parse.call_prism(prism_path,individual)
-		evaluated_results =parse.Parse(filename).get_output()
-		print evaluated_results
+		if simulatePrism == False:
+			global prism_path
+			filename = parse.call_prism(prism_path,individual)
+			evaluated_results =parse.Parse(filename).get_output()
+			print evaluated_results
+	
+			logging.debug (filename +" : "+ str(evaluated_results))
+		
+		else :
 
-		logging.debug (filename +" : "+ str(evaluated_results))
-		"""
-		
-		#Simulate evaluate results
-		evaluated_results = (1,random.random(),random.random())
+			#Simulate evaluate results
+			evaluated_results = (1,random.random(),random.random())
 	
 		if evaluated_results:
 			hashmap[string] = evaluated_results
@@ -152,12 +153,12 @@ def evaluateInd(individual):
 
 toolbox.register("mate", tools.cxTwoPoint)
 toolbox.register("mutate", tools.mutUniformInt, low = 0 , up = 1, indpb=0.01)
-toolbox.register("select", tools.selSPEA2)
+toolbox.register("select", tools.selNSGA2)
 toolbox.register("evaluate", evaluateInd)
 
 
 
-def main_spea2(seed=None,NGEN=100,MU=100):
+def main_nsga2(seed=None,NGEN=100,MU=100):
     random.seed(seed)
 
     #NGEN       # Generation
@@ -175,7 +176,7 @@ def main_spea2(seed=None,NGEN=100,MU=100):
     
     pop = toolbox.population(n=MU)
     
-    print ("Algorithm = SPEA2")
+    print ("Algorithm = NSGA2")
     print "Generation = ",NGEN
     print "Population Size = ",MU
     	
@@ -254,7 +255,7 @@ def plotHitRatio(algorithm,main):
     global hits,calls
     x_axis = []
     y_axis = []
-    for i in xrange(0,300,100):
+    for i in xrange(0,300,10):
 	p,s = main(1,i,100)  
     	hit_ratio = 0
     	if calls != 0 :
@@ -279,16 +280,15 @@ def plotHitRatio(algorithm,main):
     plt.ylabel('Cache Hit Ratio', fontsize=16)
     plt.show()
     """
-    sys.exit()
 
     
 if __name__ == "__main__":
  
 
 
-    plotHitRatio("SPEA2",main_spea2)  
+    plotHitRatio("NSGA2",main_nsga2)
     with duration():
-        pop, stats = main_spea2()
+        pop, stats = main_nsga2()
 
 
     
