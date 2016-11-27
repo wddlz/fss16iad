@@ -11,6 +11,9 @@ from contextlib import contextmanager
 import numpy
 import time
 
+from prism import getObjectives
+
+
 from math import sqrt
 
 from deap import algorithms
@@ -44,7 +47,7 @@ Kb = (1,2)
 Ks = (8,9)
 Offset = (10000,15000)
 
-prism_path = "/home/adhuri/prism-4.3.1-linux64/bin/prism"
+#prism_path = "/home/adhuri/prism-4.3.1-linux64/bin/prism"
 #pop_size = 8
 
 @contextmanager
@@ -101,7 +104,7 @@ toolbox.register("population", tools.initRepeat, list, toolbox.gen_one)
 
 
 def prism(individual):
-	
+	simulatePrism = False
 	
 	#Testing prism call 
 	global hashmap,calls,hits
@@ -116,24 +119,27 @@ def prism(individual):
 	try:
 		# Put in hashmap
 		if hashmap[string]:
-			print string, " already in hashmap "
+			logging.debug(string + " already in hashmap ")
 			hits +=1 
 			return hashmap[string]
 
 	except:
-		print string , " adding in hashmap "
+		logging.debug(string + " adding in hashmap ")
 		
-		"""
-		global prism_path
-		filename = parse.call_prism(prism_path,individual)
-		evaluated_results =parse.Parse(filename).get_output()
-		print evaluated_results
+		if simulatePrism == False:
+			#global prism_path
+			#filename = parse.call_prism(prism_path,individual)
+			#evaluated_results =parse.Parse(filename).get_output()
+			#print evaluated_results
+	
+			evaluated_results = getObjectives(individual) # online call
 
-		logging.debug (filename +" : "+ str(evaluated_results))
-		"""
+			logging.info("Evaluated results :"+repr( evaluated_results) +" ,for :"+repr(individual))
 		
-		#Simulate evaluate results
-		evaluated_results = (1,random.random(),random.random())
+		else :
+
+			#Simulate evaluate results
+			evaluated_results = (1,random.random(),random.random())
 	
 		if evaluated_results:
 			hashmap[string] = evaluated_results
@@ -152,12 +158,12 @@ def evaluateInd(individual):
 
 toolbox.register("mate", tools.cxTwoPoint)
 toolbox.register("mutate", tools.mutUniformInt, low = 0 , up = 1, indpb=0.01)
-toolbox.register("select", tools.selSPEA2)
+toolbox.register("select", tools.selNSGA2)
 toolbox.register("evaluate", evaluateInd)
 
 
 
-def main_spea2(seed=None,NGEN=100,MU=100):
+def main_nsga2(seed=None,NGEN=100,MU=100):
     random.seed(seed)
 
     #NGEN       # Generation
@@ -175,7 +181,7 @@ def main_spea2(seed=None,NGEN=100,MU=100):
     
     pop = toolbox.population(n=MU)
     
-    print ("Algorithm = SPEA2")
+    print ("Algorithm = NSGA2")
     print "Generation = ",NGEN
     print "Population Size = ",MU
     	
@@ -254,7 +260,7 @@ def plotHitRatio(algorithm,main):
     global hits,calls
     x_axis = []
     y_axis = []
-    for i in xrange(0,300,100):
+    for i in xrange(0,300,10):
 	p,s = main(1,i,100)  
     	hit_ratio = 0
     	if calls != 0 :
@@ -279,18 +285,23 @@ def plotHitRatio(algorithm,main):
     plt.ylabel('Cache Hit Ratio', fontsize=16)
     plt.show()
     """
-    sys.exit()
 
     
 if __name__ == "__main__":
- 
+    #"""
+    import multiprocessing
+
+    pool = multiprocessing.Pool()
+    toolbox.register("map", pool.map)
+    #"""
+    #from scoop import futures
+
+    #toolbox.register("map", futures.map)
 
 
-    plotHitRatio("SPEA2",main_spea2)  
+    #plotHitRatio("NSGA2",main_nsga2)
     with duration():
-        pop, stats = main_spea2()
-
-
+        pop, stats = main_nsga2(NGEN=10,MU=12) # Population multiple of 4
     
     
     print " Final Population "
@@ -302,5 +313,5 @@ if __name__ == "__main__":
     print "Total Calls ", calls
     print "Hit Count" , hits
 
-    plotGraph(pop)
+    #plotGraph(pop)
 

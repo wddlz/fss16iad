@@ -11,6 +11,9 @@ from contextlib import contextmanager
 import numpy
 import time
 
+from prism import getObjectives
+
+
 from math import sqrt
 
 from deap import algorithms
@@ -44,7 +47,7 @@ Kb = (1,2)
 Ks = (8,9)
 Offset = (10000,15000)
 
-prism_path = "/home/adhuri/prism-4.3.1-linux64/bin/prism"
+#prism_path = "/home/adhuri/prism-4.3.1-linux64/bin/prism"
 #pop_size = 8
 
 @contextmanager
@@ -101,7 +104,7 @@ toolbox.register("population", tools.initRepeat, list, toolbox.gen_one)
 
 
 def prism(individual):
-	simulatePrism = True
+	simulatePrism = False
 	
 	#Testing prism call 
 	global hashmap,calls,hits
@@ -116,20 +119,22 @@ def prism(individual):
 	try:
 		# Put in hashmap
 		if hashmap[string]:
-			#print string, " already in hashmap "
+			logging.debug(string + " already in hashmap ")
 			hits +=1 
 			return hashmap[string]
 
 	except:
-		#print string , " adding in hashmap "
+		logging.debug(string + " adding in hashmap ")
 		
 		if simulatePrism == False:
-			global prism_path
-			filename = parse.call_prism(prism_path,individual)
-			evaluated_results =parse.Parse(filename).get_output()
-			print evaluated_results
+			#global prism_path
+			#filename = parse.call_prism(prism_path,individual)
+			#evaluated_results =parse.Parse(filename).get_output()
+			#print evaluated_results
 	
-			logging.debug (filename +" : "+ str(evaluated_results))
+			evaluated_results = getObjectives(individual) # online call
+
+			logging.info("Evaluated results :"+repr( evaluated_results) +" ,for :"+repr(individual))
 		
 		else :
 
@@ -283,14 +288,20 @@ def plotHitRatio(algorithm,main):
 
     
 if __name__ == "__main__":
- 
+    #"""
+    import multiprocessing
+
+    pool = multiprocessing.Pool()
+    toolbox.register("map", pool.map)
+    #"""
+    #from scoop import futures
+
+    #toolbox.register("map", futures.map)
 
 
-    plotHitRatio("NSGA2",main_nsga2)
+    #plotHitRatio("NSGA2",main_nsga2)
     with duration():
-        pop, stats = main_nsga2()
-
-
+        pop, stats = main_nsga2(NGEN=10,MU=12) # Population multiple of 4
     
     
     print " Final Population "
@@ -302,5 +313,5 @@ if __name__ == "__main__":
     print "Total Calls ", calls
     print "Hit Count" , hits
 
-    plotGraph(pop)
+    #plotGraph(pop)
 

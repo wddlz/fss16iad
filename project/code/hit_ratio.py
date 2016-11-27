@@ -21,12 +21,13 @@ for i in lines :
 
 
 for x,y,l in zip(x_axis,y_axis,lbl):
+    print "Plotting for",l
     plt.plot(x,y,'o-',label = l,c=np.random.rand(3,1))
     plt.axis("tight")
     plt.xlabel('Generations', fontsize=18)
-    plt.ylabel('Cache Hit Ratio', fontsize=16)
+    plt.ylabel('Hashmap Hit Ratio', fontsize=16)
     plt.legend(loc='lower right')
-    plt.show()
+ #   plt.show()
 
 
 
