@@ -75,7 +75,7 @@ def ok(decs):
 def aop_decs():
     decs = gen_decs()
     while not ok(decs):
-        decs = gen_decs
+        decs = gen_decs()
     return decs
 
 def gen_decs():
