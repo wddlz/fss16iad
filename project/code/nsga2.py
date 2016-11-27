@@ -232,10 +232,14 @@ def main_nsga2(seed=None,NGEN=100,MU=100):
             ind.fitness.values = fit
 
         # Select the next generation population
+        oldpop = pop
         pop = toolbox.select(pop + offspring, MU)
         record = stats.compile(pop)
         logbook.record(gen=gen, evals=len(invalid_ind), **record)
         print(logbook.stream)
+        if stop_early(oldpop, pop):
+            print("Stopping generation early, no purchases")
+            break
 
     #print("Final population hypervolume is %f" % hypervolume(pop, [11.0, 11.0]))
 
@@ -295,7 +299,21 @@ def plotHitRatio(algorithm,main):
     plt.show()
     """
 
+
+# function to exit early based on lack of purchases made
+# if purchases made == 0, decisions are overtuned and buyer/seller cannot reach an agreement
+def stop_early(oldPop, curPop):
+    purchase_count = 0.0
+
+    for p in curPop:
+        purchase_count += p.fitness.values[0]
+
+    if purchase_count < 1.0:
+        return True
+
+    return False
     
+
 if __name__ == "__main__":
     #global hashmap
 
