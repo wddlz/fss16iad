@@ -48,7 +48,7 @@ class Parse():
 
     def get_output(self):
         status={'time' : self.time, 'purchase':self.purchase , 'utility':self.utility }
-        return int(status['purchase']),int(status['utility']),int(status['time'])
+        return int(status['purchase']),float(status['utility'])/float(status['time']),int(status['time'])
 	
 
     def __str__(self):
