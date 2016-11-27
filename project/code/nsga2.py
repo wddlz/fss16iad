@@ -1,3 +1,4 @@
+import ast
 import random
 import sys
 import subprocess
@@ -24,6 +25,8 @@ from deap import creator
 from deap import tools
 import matplotlib.pyplot as plt
 import numpy
+
+import redis
 
 calls = 0 
 hits = 0
@@ -105,7 +108,7 @@ toolbox.register("population", tools.initRepeat, list, toolbox.gen_one)
 
 def prism(individual):
 	simulatePrism = False
-	
+	r = redis.StrictRedis(host='152.46.19.201', port=6379, db=0)
 	#Testing prism call 
 	global hashmap,calls,hits
 	# Empty individual decisions
@@ -117,37 +120,43 @@ def prism(individual):
 	string = repr(individual)
 	
 	try:
+		cache = r.get(string)
+
+		#print cache
 		# Put in hashmap
-		if hashmap[string]:
-			logging.debug(string + " already in hashmap ")
+		if cache is not None:
+			logging.debug(string + " -Already in hashmap ")
 			hits +=1 
-			return hashmap[string]
+			return ast.literal_eval(cache)
 
-	except:
-		logging.debug(string + " adding in hashmap ")
-		
-		if simulatePrism == False:
-			#global prism_path
-			#filename = parse.call_prism(prism_path,individual)
-			#evaluated_results =parse.Parse(filename).get_output()
-			#print evaluated_results
-	
-			evaluated_results = getObjectives(individual) # online call
-
-			logging.info("Evaluated results :"+repr( evaluated_results) +" ,for :"+repr(individual))
-		
-		else :
-
-			#Simulate evaluate results
-			evaluated_results = (1,random.random(),random.random())
-	
-		if evaluated_results:
-			hashmap[string] = evaluated_results
 		else:
-			hashmap[string] = (0,0,0)
+			logging.debug(string + " Adding in hashmap ")
+		
+			if simulatePrism == False:
+				#global prism_path
+				#filename = parse.call_prism(prism_path,individual)
+				#evaluated_results =parse.Parse(filename).get_output()
+				#print evaluated_results
+	
+				evaluated_results = getObjectives(individual) # online call
 
-		return hashmap[string] 
+				logging.info("Evaluated results :"+repr( evaluated_results) +" ,for :"+repr(individual))
+		
+			else :
+	
+				#Simulate evaluate results
+				evaluated_results = (1,random.random(),random.random())
+	
+			if evaluated_results:
+				r.set(string, evaluated_results)
+			else:
+				r.set(string, (0,0,0))
 
+			return ast.literal_eval(r.get(string))
+	except Exception as e: 
+		print (" Caching is disabled. Start redis on 152.46.19.201 : ",e)
+		sys.exit()
+		
 def evaluateInd(individual):
     # Do some computation
 	#print "Individual", individual;
@@ -288,17 +297,22 @@ def plotHitRatio(algorithm,main):
 
     
 if __name__ == "__main__":
-    #"""
+    #global hashmap
+
+    #r = redis.StrictRedis(host='152.46.19.201', port=6379, db=0)
+
+    """
     import multiprocessing
 
     pool = multiprocessing.Pool()
     toolbox.register("map", pool.map)
+    """
     #"""
-    #from scoop import futures
+    from scoop import futures
 
-    #toolbox.register("map", futures.map)
+    toolbox.register("map", futures.map)
 
-
+    #"""
     #plotHitRatio("NSGA2",main_nsga2)
     with duration():
         pop, stats = main_nsga2(NGEN=50,MU=40) # Population multiple of 4
@@ -312,6 +326,6 @@ if __name__ == "__main__":
 
     #print "Total Calls ", calls
     #print "Hit Count" , hits
-
+    r.flushall() # Remove all keys once done 
     plotGraph(pop)
 
