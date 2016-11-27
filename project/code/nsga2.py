@@ -294,7 +294,6 @@ def plotHitRatio(algorithm,main):
 # function to exit early based on lack of purchases made
 # if purchases made == 0, decisions are overtuned and buyer/seller cannot reach an agreement
 def stop_early(oldPop, curPop):
-    print("IN STOP EARLY")
     purchase_count = 0.0
 
     for p in curPop:
@@ -305,7 +304,7 @@ def stop_early(oldPop, curPop):
 
     return False
     
-    
+
 if __name__ == "__main__":
     #"""
     import multiprocessing
