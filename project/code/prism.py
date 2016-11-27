@@ -16,7 +16,7 @@ def getObjectives(individual):
 	
 	url_values = urllib.urlencode(data)
 	#print url_values  # The order may differ. 
-	url = 'http://52.207.214.77:5001/prism'
+	url = 'http://152.46.19.201:5001/prism'
 
 
 	full_url = url + '?' + url_values
@@ -24,7 +24,7 @@ def getObjectives(individual):
 	results = urllib2.urlopen(full_url).read()
 	return ast.literal_eval(results)
    except:
-	print "Error connecting to 52.207.214.77:5001 for ", full_url
+	print "Error connecting to ",url," for ", full_url
 	print " exiting"
 	sys.exit()
 

@@ -301,7 +301,7 @@ if __name__ == "__main__":
 
     #plotHitRatio("NSGA2",main_nsga2)
     with duration():
-        pop, stats = main_nsga2(NGEN=10,MU=12) # Population multiple of 4
+        pop, stats = main_nsga2(NGEN=50,MU=40) # Population multiple of 4
     
     
     print " Final Population "
@@ -310,8 +310,8 @@ if __name__ == "__main__":
 
 
 
-    print "Total Calls ", calls
-    print "Hit Count" , hits
+    #print "Total Calls ", calls
+    #print "Hit Count" , hits
 
-    #plotGraph(pop)
+    plotGraph(pop)
 
