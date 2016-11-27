@@ -158,12 +158,12 @@ def evaluateInd(individual):
 
 toolbox.register("mate", tools.cxTwoPoint)
 toolbox.register("mutate", tools.mutUniformInt, low = 0 , up = 1, indpb=0.01)
-toolbox.register("select", tools.selNSGA2)
+toolbox.register("select", tools.selSPEA2)
 toolbox.register("evaluate", evaluateInd)
 
 
 
-def main_nsga2(seed=None,NGEN=100,MU=100):
+def main_spea2(seed=None,NGEN=100,MU=100):
     random.seed(seed)
 
     #NGEN       # Generation
@@ -181,7 +181,7 @@ def main_nsga2(seed=None,NGEN=100,MU=100):
     
     pop = toolbox.population(n=MU)
     
-    print ("Algorithm = NSGA2")
+    print ("Algorithm = SPEA2")
     print "Generation = ",NGEN
     print "Population Size = ",MU
     	
@@ -299,9 +299,9 @@ if __name__ == "__main__":
     #toolbox.register("map", futures.map)
 
 
-    #plotHitRatio("NSGA2",main_nsga2)
+    #plotHitRatio("SPEA2",main_spea2)
     with duration():
-        pop, stats = main_nsga2(NGEN=10,MU=12) # Population multiple of 4
+        pop, stats = main_spea2(NGEN=10,MU=12) # Population multiple of 4
     
     
     print " Final Population "
