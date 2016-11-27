@@ -317,7 +317,7 @@ def stop_early(oldPop, curPop):
 if __name__ == "__main__":
     #global hashmap
 
-    #r = redis.StrictRedis(host='152.46.19.201', port=6379, db=0)
+    r = redis.StrictRedis(host='152.46.19.201', port=6379, db=0)
 
     """
     import multiprocessing
