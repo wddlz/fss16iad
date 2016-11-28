@@ -169,18 +169,21 @@ def evaluateInd(individual):
 
 
 
-toolbox.register("mate", tools.cxTwoPoint)
-toolbox.register("mutate", tools.mutUniformInt, low = 0 , up = 1, indpb=0.01)
-toolbox.register("select", tools.selNSGA2)
-toolbox.register("evaluate", evaluateInd)
 
 
 
-def main_nsga2(algorithm,seed=None,NGEN=100,MU=100):
+def main_nsga2(algorithm="NSGA2",seed=None,NGEN=100,MU=100):
     random.seed(seed)
     #NGEN       # Generation
     #MU     # Population Size
     CXPB = 0.9
+
+
+    toolbox.register("mate", tools.cxTwoPoint)
+    toolbox.register("mutate", tools.mutUniformInt, low = 0 , up = 1, indpb=0.01)
+    toolbox.register("select", tools.selNSGA2)
+    toolbox.register("evaluate", evaluateInd)
+
 	
     stats = tools.Statistics(lambda ind: ind.fitness.values)
     stats.register("avg", numpy.mean, axis=0)
@@ -312,6 +315,154 @@ def main_nsga2(algorithm,seed=None,NGEN=100,MU=100):
 
     return pop, logbook
 
+#=======SPEA2=======#
+def main_spea2(algorithm="SPEA2",seed=None,NGEN=100,MU=100):
+    random.seed(seed)
+    #NGEN       # Generation
+    #MU     # Population Size
+    CXPB = 0.9
+
+
+    toolbox.register("mate", tools.cxTwoPoint)
+    toolbox.register("mutate", tools.mutUniformInt, low = 0 , up = 1, indpb=0.01)
+    toolbox.register("select", tools.selSPEA2)
+    toolbox.register("evaluate", evaluateInd)
+
+
+
+    stats = tools.Statistics(lambda ind: ind.fitness.values)
+    stats.register("avg", numpy.mean, axis=0)
+    stats.register("std", numpy.std, axis=0)
+    stats.register("min", numpy.min, axis=0)
+    stats.register("max", numpy.max, axis=0)
+    
+    logbook = tools.Logbook()
+    logbook.header = "gen", "evals", "std", "min", "avg", "max"
+    
+    pop = toolbox.population(n=MU)
+    #algorithm = "NSGA2"
+    print "Algorithm = ",algorithm
+    print "Generation = ",NGEN
+    print "Population Size = ",MU
+    referencePoint = (2.0, 0, 0)
+    hv = InnerHyperVolume(referencePoint)
+    #front = [(1.0, 0.5128205128205128, 195.0),(1.0, 2.7732997481108312, 397.0),(1.0, 0.7787356321839081, 348.0),(1.0, 2.7732997481108312, 397.0),(1.0, 0.5339233038348082, 339.0),(1.0, 0.5128205128205128, 195.0),(1.0, 0.5128205128205128, 195.0),(1.0, 0.5128205128205128, 195.0)]
+
+    global identifier	
+    statfile_purchase = genFileName(algorithm,"purchase",NGEN,MU,identifier) # Stat Generation
+    insert(statfile_purchase,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
+
+  
+    statfile_utility = genFileName(algorithm,"utility",NGEN,MU,identifier) # Stat Generation
+    insert(statfile_utility,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
+
+    statfile_time = genFileName(algorithm,"time",NGEN,MU,identifier) # Stat Generation
+    insert(statfile_time,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
+
+
+    #statfile_hypervolume = genFileName(algorithm,"hypervolume",NGEN,MU) # Stat Generation
+    #insert(statfile_hypervolume,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
+
+
+    #statfile_spread = genFileName(algorithm,"spread",NGEN,MU,identifier) # Stat Generation
+    #insert(statfile_spread,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
+
+    #statfile_igd = genFileName(algorithm,"igd",NGEN,MU,identifier) # Stat Generation
+    #insert(statfile_igd,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
+
+    print ("Initial Population")
+    for p in pop:
+	print p
+
+
+
+    # Evaluate the individuals with an invalid fitness
+    invalid_ind = [ind for ind in pop if not ind.fitness.valid]
+    fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
+    for ind, fit in zip(invalid_ind, fitnesses):
+        ind.fitness.values = fit
+
+    # This is just to assign the crowding distance to the individuals
+    # no actual selection is done
+    pop = toolbox.select(pop, len(pop))
+    
+    record = stats.compile(pop)
+    logbook.record(gen=0, evals=len(invalid_ind), **record)
+    print(logbook.stream)
+
+    # Begin the generational process
+    for gen in range(1, NGEN):
+        # Vary the population
+        offspring = tools.selTournamentDCD(pop, len(pop))
+        offspring = [toolbox.clone(ind) for ind in offspring]
+        
+        for ind1, ind2 in zip(offspring[::2], offspring[1::2]):
+            if random.random() <= CXPB:
+                toolbox.mate(ind1, ind2)
+            
+            toolbox.mutate(ind1)
+            toolbox.mutate(ind2)
+            del ind1.fitness.values, ind2.fitness.values
+        
+        # Evaluate the individuals with an invalid fitness
+        invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
+        fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
+        for ind, fit in zip(invalid_ind, fitnesses):
+            ind.fitness.values = fit
+
+        # Select the next generation population
+        oldpop = pop
+	#map(lambda x:insert(statfile_purchase,str(x.fitness.values[0])),oldpop)
+	#map(lambda x:insert(statfile_utility,str(x.fitness.values[1])),oldpop)
+	#map(lambda x:insert(statfile_time,str(x.fitness.values[2])),oldpop)
+	
+	#Only final generation required
+        #volume = hv.compute([x.fitness.values for x in oldpop if x.fitness.values[0]==1.0])
+        #print volume
+	#insert(statfile_hypervolume,str(volume))
+	#insert(statfile_spread,str(spread(oldpop)))
+	#insert(statfile_igd,str(igd(oldpop)))
+        
+
+	pop = toolbox.select(pop + offspring, MU)
+        record = stats.compile(pop)
+        logbook.record(gen=gen, evals=len(invalid_ind), **record)
+        print(logbook.stream)
+	
+	
+
+        if stop_early(oldpop, pop):
+            print("Stopping generation early, no purchases")
+            break
+	
+    map(lambda x:insert(statfile_purchase,str(x.fitness.values[0])),pop)
+    insertnl(statfile_purchase)	
+    map(lambda x:insert(statfile_utility,str(x.fitness.values[1])),pop)
+    insertnl(statfile_utility)	
+    map(lambda x:insert(statfile_time,str(x.fitness.values[2])),pop)
+    insertnl(statfile_time)	
+    
+    volume = hv.compute([x.fitness.values for x in pop if x.fitness.values[0]==1.0])
+
+    print "Hypervolume = ",volume
+    #insert(statfile_hypervolume,str(volume))
+    #insert(statfile_spread,str(spread(oldpop)))
+    #insertnl(statfile_spread)	
+    #insert(statfile_igd,str(igd(oldpop)))
+    #insertnl(statfile_igd)	
+
+
+    r = redis.StrictRedis(host='152.46.19.201', port=6379, db=0)
+    r.flushall() # Remove all keys once done 
+    
+
+    #print("Final population hypervolume is %f" % hypervolume(pop, [11.0, 11.0]))
+
+    return pop, logbook
+
+
+
+
 
 def plotGraph(pop):
 
@@ -388,50 +539,25 @@ if __name__ == "__main__":
 
     toolbox.register("map", futures.map)
 
-    #plotHitRatio("NSGA2",main_nsga2)
+    algo = [main_nsga2 , main_spea2]
+    #algo = [ main_spea2]
 
-    #NSGA2
-    """
-    with duration():
-	NGEN=4
-	MU=20
-	algorithm="NSGA2"
-        pop, stats = main_nsga2(algorithm,NGEN=NGEN,MU=MU) # Population multiple of 4
+    for algorithm in algo:
+	#plotHitRatio("NSGA2",main_nsga2)
+
+	with duration():
+		NGEN=4
+		MU=20
+        	pop, stats = algorithm(NGEN=NGEN,MU=MU) # Population multiple of 4
     
     
-    print " Final Population "
-    for i in pop :
-	print i,i.fitness.values
+    		print " Final Population "
+    		for i in pop :
+			print i,i.fitness.values
 
-    print "Generate stats for objectives using `sh printStat.sh -u "+str(identifier)+"`" 
+    		print "Generate stats for objectives using `sh printStat.sh -u "+str(identifier)+"`" 
 
-    #print "Total Calls ", calls
-    #print "Hit Count" , hits
+    		#print "Total Calls ", calls
+    		#print "Hit Count" , hits
 
-    plotGraph(pop)
-    """
-
-    with duration():
-        NGEN=4
-        MU=20
-        algorithm="SPEA2"
-        pop, stats = main_spea2(algorithm,NGEN=NGEN,MU=MU) # Population multiple of 4
-
-
-    print " Final Population "
-    for i in pop :
-        print i,i.fitness.values
-
-    print "Generate stats for objectives using `sh printStat.sh -u "+str(identifier)+"`"
-
-    #print "Total Calls ", calls
-    #print "Hit Count" , hits
-
-    plotGraph(pop)
-
-
-
-
-
-
-
+    		plotGraph(pop)
