@@ -12,6 +12,8 @@ from contextlib import contextmanager
 import numpy
 import time
 
+from hypervolume import *
+
 from prism import getObjectives
 
 from savestat import genFileName,insert,insertnl
@@ -194,7 +196,10 @@ def main_nsga2(seed=None,NGEN=100,MU=100):
     print "Algorithm = ",algorithm
     print "Generation = ",NGEN
     print "Population Size = ",MU
-    
+    referencePoint = (2.0, 0, 0)
+    hv = InnerHyperVolume(referencePoint)
+    #front = [(1.0, 0.5128205128205128, 195.0),(1.0, 2.7732997481108312, 397.0),(1.0, 0.7787356321839081, 348.0),(1.0, 2.7732997481108312, 397.0),(1.0, 0.5339233038348082, 339.0),(1.0, 0.5128205128205128, 195.0),(1.0, 0.5128205128205128, 195.0),(1.0, 0.5128205128205128, 195.0)]
+
     global identifier	
     statfile_purchase = genFileName(algorithm,"purchase",NGEN,MU,identifier) # Stat Generation
     insert(statfile_purchase,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
@@ -208,7 +213,7 @@ def main_nsga2(seed=None,NGEN=100,MU=100):
 
 
     statfile_hypervolume = genFileName(algorithm,"hypervolume",NGEN,MU,identifier) # Stat Generation
-    #insert(statfile_hypervolume,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
+    insert(statfile_hypervolume,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
 
 
     statfile_spread = genFileName(algorithm,"spread",NGEN,MU,identifier) # Stat Generation
@@ -260,7 +265,9 @@ def main_nsga2(seed=None,NGEN=100,MU=100):
 	map(lambda x:insert(statfile_utility,str(x.fitness.values[1])),oldpop)
 	map(lambda x:insert(statfile_time,str(x.fitness.values[2])),oldpop)
 
-	#insert(statfile_hypervolume,str(hypervolume(oldpop)))
+        volume = hv.compute([x.fitness.values for x in oldpop if x.fitness.values[0]==1.0])
+        #print volume
+	insert(statfile_hypervolume,str(volume))
 	#insert(statfile_spread,str(spread(oldpop)))
 	#insert(statfile_igd,str(igd(oldpop)))
         
@@ -283,8 +290,11 @@ def main_nsga2(seed=None,NGEN=100,MU=100):
     map(lambda x:insert(statfile_time,str(x.fitness.values[2])),pop)
     insertnl(statfile_time)	
 
-    #insert(statfile_hypervolume,str(hypervolume(oldpop)))
-    #insertnl(statfile_hypervolume)	
+    
+    volume = hv.compute([x.fitness.values for x in pop if x.fitness.values[0]==1.0])
+    #print volume
+    insert(statfile_hypervolume,str(volume))
+    insertnl(statfile_hypervolume)	
     #insert(statfile_spread,str(spread(oldpop)))
     #insertnl(statfile_spread)	
     #insert(statfile_igd,str(igd(oldpop)))
