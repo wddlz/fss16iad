@@ -1,7 +1,7 @@
 import sys
 import uuid
 
-def genFileName(algorithm,plot,ngen,mu,temp):
+def genFileName(algorithm,plot,ngen,mu,temp=""):
 	return "stats/stat_"+algorithm+"_"+plot+"_"+"gen"+str(ngen)+"pop"+str(mu)+"_"+temp+".txt"	
 
 def insert(filename,string):

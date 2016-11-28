@@ -176,7 +176,7 @@ toolbox.register("evaluate", evaluateInd)
 
 
 
-def main_nsga2(seed=None,NGEN=100,MU=100):
+def main_nsga2(algorithm,seed=None,NGEN=100,MU=100):
     random.seed(seed)
     #NGEN       # Generation
     #MU     # Population Size
@@ -192,7 +192,7 @@ def main_nsga2(seed=None,NGEN=100,MU=100):
     logbook.header = "gen", "evals", "std", "min", "avg", "max"
     
     pop = toolbox.population(n=MU)
-    algorithm = "NSGA2"
+    #algorithm = "NSGA2"
     print "Algorithm = ",algorithm
     print "Generation = ",NGEN
     print "Population Size = ",MU
@@ -212,8 +212,8 @@ def main_nsga2(seed=None,NGEN=100,MU=100):
     insert(statfile_time,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
 
 
-    statfile_hypervolume = genFileName(algorithm,"hypervolume",NGEN,MU,identifier) # Stat Generation
-    insert(statfile_hypervolume,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
+    statfile_hypervolume = genFileName(algorithm,"hypervolume",NGEN,MU) # Stat Generation
+    #insert(statfile_hypervolume,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
 
 
     statfile_spread = genFileName(algorithm,"spread",NGEN,MU,identifier) # Stat Generation
@@ -264,10 +264,11 @@ def main_nsga2(seed=None,NGEN=100,MU=100):
 	map(lambda x:insert(statfile_purchase,str(x.fitness.values[0])),oldpop)
 	map(lambda x:insert(statfile_utility,str(x.fitness.values[1])),oldpop)
 	map(lambda x:insert(statfile_time,str(x.fitness.values[2])),oldpop)
-
-        volume = hv.compute([x.fitness.values for x in oldpop if x.fitness.values[0]==1.0])
+	
+	#Only final generation required
+        #volume = hv.compute([x.fitness.values for x in oldpop if x.fitness.values[0]==1.0])
         #print volume
-	insert(statfile_hypervolume,str(volume))
+	#insert(statfile_hypervolume,str(volume))
 	#insert(statfile_spread,str(spread(oldpop)))
 	#insert(statfile_igd,str(igd(oldpop)))
         
@@ -292,9 +293,7 @@ def main_nsga2(seed=None,NGEN=100,MU=100):
 
     
     volume = hv.compute([x.fitness.values for x in pop if x.fitness.values[0]==1.0])
-    #print volume
     insert(statfile_hypervolume,str(volume))
-    insertnl(statfile_hypervolume)	
     #insert(statfile_spread,str(spread(oldpop)))
     #insertnl(statfile_spread)	
     #insert(statfile_igd,str(igd(oldpop)))
@@ -394,16 +393,19 @@ if __name__ == "__main__":
     #"""
     #plotHitRatio("NSGA2",main_nsga2)
     with duration():
-
-        pop, stats = main_nsga2(NGEN=4,MU=20) # Population multiple of 4
+	NGEN=4
+	MU=20
+	algorithm="NSGA2"
+        pop, stats = main_nsga2(algorithm,NGEN=NGEN,MU=MU) # Population multiple of 4
     
     
     print " Final Population "
     for i in pop :
 	print i,i.fitness.values
 
-    print "Generate stats using `sh printStat.sh -u "+str(identifier)+"`"
+    print "Generate stats for objectives using `sh printStat.sh -u "+str(identifier)+"`" 
 
+    print "Generate stats for Hypervolume using `sh printStat.sh -u "+str(algorithm)+"_hypervolume_gen"+str(NGEN)+"pop"+str(MU)+"`"
     #print "Total Calls ", calls
     #print "Hit Count" , hits
     r.flushall() # Remove all keys once done 
