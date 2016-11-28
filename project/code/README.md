@@ -3,6 +3,9 @@
 ## Instructions
 1. To run Flask app on AWS - ```gunicorn -w 10 -b 0.0.0.0:5001 app:app```
 
+**Update** : Replaced gunicorn with uwsgi . 
+Run uwsgi using ```uwsgi -s /tmp/uwsgi.sock -p 100 --http 152.46.19.201:5001  --manage-script-name --mount /=app:app```
+
 2. To run using scoop 
 Add this code to your application - 
 ```
@@ -22,4 +25,6 @@ Add this code to your application -
  ```
     
 and run using ```python nsga2.py ```
+
+
     
