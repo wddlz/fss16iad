@@ -14,6 +14,7 @@ import time
 
 from prism import getObjectives
 
+from savestat import genFileName,insert,insertnl
 
 from math import sqrt
 
@@ -31,6 +32,7 @@ import redis
 calls = 0 
 hits = 0
 hashmap={}
+identifier = "temp"
 
 logging.basicConfig(filename='project.log',filemode='w',format='%(asctime)s [%(filename)s:%(lineno)s - %(funcName)s() ] : %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.DEBUG)
 
@@ -174,7 +176,6 @@ toolbox.register("evaluate", evaluateInd)
 
 def main_nsga2(seed=None,NGEN=100,MU=100):
     random.seed(seed)
-
     #NGEN       # Generation
     #MU     # Population Size
     CXPB = 0.9
@@ -189,11 +190,33 @@ def main_nsga2(seed=None,NGEN=100,MU=100):
     logbook.header = "gen", "evals", "std", "min", "avg", "max"
     
     pop = toolbox.population(n=MU)
-    
-    print ("Algorithm = NSGA2")
+    algorithm = "NSGA2"
+    print "Algorithm = ",algorithm
     print "Generation = ",NGEN
     print "Population Size = ",MU
-    	
+    
+    global identifier	
+    statfile_purchase = genFileName(algorithm,"purchase",NGEN,MU,identifier) # Stat Generation
+    insert(statfile_purchase,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
+
+  
+    statfile_utility = genFileName(algorithm,"utility",NGEN,MU,identifier) # Stat Generation
+    insert(statfile_utility,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
+
+    statfile_time = genFileName(algorithm,"time",NGEN,MU,identifier) # Stat Generation
+    insert(statfile_time,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
+
+
+    statfile_hypervolume = genFileName(algorithm,"hypervolume",NGEN,MU,identifier) # Stat Generation
+    #insert(statfile_hypervolume,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
+
+
+    statfile_spread = genFileName(algorithm,"spread",NGEN,MU,identifier) # Stat Generation
+    #insert(statfile_spread,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
+
+    statfile_igd = genFileName(algorithm,"igd",NGEN,MU,identifier) # Stat Generation
+    #insert(statfile_igd,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
+
     print ("Initial Population")
     for p in pop:
 	print p
@@ -233,13 +256,41 @@ def main_nsga2(seed=None,NGEN=100,MU=100):
 
         # Select the next generation population
         oldpop = pop
-        pop = toolbox.select(pop + offspring, MU)
+	map(lambda x:insert(statfile_purchase,str(x.fitness.values[0])),oldpop)
+	map(lambda x:insert(statfile_utility,str(x.fitness.values[1])),oldpop)
+	map(lambda x:insert(statfile_time,str(x.fitness.values[2])),oldpop)
+
+	#insert(statfile_hypervolume,str(hypervolume(oldpop)))
+	#insert(statfile_spread,str(spread(oldpop)))
+	#insert(statfile_igd,str(igd(oldpop)))
+        
+
+	pop = toolbox.select(pop + offspring, MU)
         record = stats.compile(pop)
         logbook.record(gen=gen, evals=len(invalid_ind), **record)
         print(logbook.stream)
+	
+	
+
         if stop_early(oldpop, pop):
             print("Stopping generation early, no purchases")
             break
+	
+    map(lambda x:insert(statfile_purchase,str(x.fitness.values[0])),pop)
+    insertnl(statfile_purchase)	
+    map(lambda x:insert(statfile_utility,str(x.fitness.values[1])),pop)
+    insertnl(statfile_utility)	
+    map(lambda x:insert(statfile_time,str(x.fitness.values[2])),pop)
+    insertnl(statfile_time)	
+
+    #insert(statfile_hypervolume,str(hypervolume(oldpop)))
+    #insertnl(statfile_hypervolume)	
+    #insert(statfile_spread,str(spread(oldpop)))
+    #insertnl(statfile_spread)	
+    #insert(statfile_igd,str(igd(oldpop)))
+    #insertnl(statfile_igd)	
+
+
 
     #print("Final population hypervolume is %f" % hypervolume(pop, [11.0, 11.0]))
 
@@ -316,7 +367,7 @@ def stop_early(oldPop, curPop):
 
 if __name__ == "__main__":
     #global hashmap
-
+    identifier = str(uuid.uuid4())	
     r = redis.StrictRedis(host='152.46.19.201', port=6379, db=0)
 
     """
@@ -333,14 +384,15 @@ if __name__ == "__main__":
     #"""
     #plotHitRatio("NSGA2",main_nsga2)
     with duration():
-        pop, stats = main_nsga2(NGEN=50,MU=40) # Population multiple of 4
+
+        pop, stats = main_nsga2(NGEN=4,MU=20) # Population multiple of 4
     
     
     print " Final Population "
     for i in pop :
 	print i,i.fitness.values
 
-
+    print "Generate stats using `sh printStat.sh -u "+str(identifier)+"`"
 
     #print "Total Calls ", calls
     #print "Hit Count" , hits

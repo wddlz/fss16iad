@@ -5,3 +5,4 @@ __pycache__/
 .idea/
 project/code/prism_output/*
 project/code/project.log
+project/code/stats/stat_*
