@@ -675,8 +675,8 @@ def plotGraph(pop,algorithm):
     #optimal_front = numpy.array(pop)
     #plt.scatter(optimal_front[:,0], optimal_front[:,1], c="r")
     #plt.scatter(front[:,0], front[:,1], c="b")
-
-    if front == []:
+    #print front
+    if len(front) == 0:
 	print "Nothing to plot"
 	return
     #print "Front ",front

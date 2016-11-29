@@ -25,8 +25,8 @@ def getObjectives(individual):
 	return ast.literal_eval(results)
    except:
 	print "Error connecting to ",url," for ", full_url
-	print " exiting"
-	sys.exit()
+	print "Better exit ,else you will get values like (0,0,0) "
+	return (0,0,0)
 
 
 #data = urllib2.urlopen(full_url)
