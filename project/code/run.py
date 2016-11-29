@@ -476,6 +476,7 @@ def main_spea2(algorithm="SPEA2",seed=None,NGEN=100,MU=100):
 #=======DE========#
 
 def main_de(algorithm="DE",seed=None,NGEN=100,MU=100):
+    
     random.seed(seed)
     #NGEN       # Generation
     #MU     # Population Size
@@ -486,12 +487,11 @@ def main_de(algorithm="DE",seed=None,NGEN=100,MU=100):
     NDIM = 3
 
     toolbox.register("mate", tools.cxTwoPoint)
-    toolbox.register("mutate", tools.mutUniformInt, low = 0 , up = 1, indpb=0.01)
     toolbox.register("select", tools.selRandom, k=3)
     toolbox.register("evaluate", evaluateInd)
-
-    hof = tools.HallOfFame(MU)
-
+    toolbox.register("mutate", tools.mutUniformInt, low = 0 , up = 1, indpb=0.01)
+    #hof = tools.HallOfFame(MU,similar = eq)
+    hof = tools.ParetoFront()
     stats = tools.Statistics(lambda ind: ind.fitness.values)
     stats.register("avg", numpy.mean, axis=0)
     stats.register("std", numpy.std, axis=0)
@@ -609,7 +609,7 @@ def plotGraph(pop):
     plt.axis("tight")
     plt.xlabel('time', fontsize=18)
     plt.ylabel('utility', fontsize=16)
-    #plt.show()
+    plt.show()
 
     if save_figure : 
 	fname = str(uuid.uuid4())
@@ -671,8 +671,10 @@ if __name__ == "__main__":
 
     toolbox.register("map", futures.map)
 
-    algo = [main_nsga2 , main_spea2 ]
-    #algo = [ main_de]
+    #algo = [main_nsga2 , main_spea2 ]
+    algo = [ main_de]
+    #algo = [main_ga]
+    paretos ={}
 
     for algorithm in algo:
 	#plotHitRatio("NSGA2",main_nsga2)
@@ -683,9 +685,11 @@ if __name__ == "__main__":
         	pop, stats = algorithm(NGEN=NGEN,MU=MU) # Population multiple of 4
     
     
-    		print " Final Population "
-    		for i in pop :
-			print i,i.fitness.values
+    		#print " Final Population "
+    		#for i in pop :
+		#	print i,i.fitness.values
+
+		paretos[algorithm.__name__] = [ i.fitness.values for i in pop ]
 
     		print "Generate stats for objectives using `sh printStat.sh -u "+str(identifier)+"`" 
 
@@ -693,3 +697,5 @@ if __name__ == "__main__":
     		#print "Hit Count" , hits
 
     		plotGraph(pop)
+
+	print paretos
