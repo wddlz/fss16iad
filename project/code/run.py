@@ -111,7 +111,7 @@ toolbox.register("population", tools.initRepeat, list, toolbox.gen_one)
 
 
 def prism(individual):
-	simulatePrism = True
+	simulatePrism = False
 	r = redis.StrictRedis(host='152.46.19.201', port=6379, db=0)
 	#Testing prism call 
 	global hashmap,calls,hits
@@ -461,6 +461,120 @@ def main_spea2(algorithm="SPEA2",seed=None,NGEN=100,MU=100):
     return pop, logbook
 
 
+#=======DE========#
+
+def main_de(algorithm="DE",seed=None,NGEN=100,MU=100):
+    random.seed(seed)
+    #NGEN       # Generation
+    #MU     # Population Size
+    # Differential evolution parameters
+    CR = 0.3
+    F = 0.75
+    # Problem dimension
+    NDIM = 3
+
+    toolbox.register("mate", tools.cxTwoPoint)
+    toolbox.register("mutate", tools.mutUniformInt, low = 0 , up = 1, indpb=0.01)
+    toolbox.register("select", tools.selRandom, k=3)
+    toolbox.register("evaluate", evaluateInd)
+
+    hof = tools.HallOfFame(MU)
+
+    stats = tools.Statistics(lambda ind: ind.fitness.values)
+    stats.register("avg", numpy.mean, axis=0)
+    stats.register("std", numpy.std, axis=0)
+    stats.register("min", numpy.min, axis=0)
+    stats.register("max", numpy.max, axis=0)
+    
+    logbook = tools.Logbook()
+    logbook.header = "gen", "evals", "std", "min", "avg", "max"
+    
+    pop = toolbox.population(n=MU)
+    #algorithm = "NSGA2"
+    print "Algorithm = ",algorithm
+    print "Generation = ",NGEN
+    print "Population Size = ",MU
+    referencePoint = (2.0, 0, 0)
+    hv = InnerHyperVolume(referencePoint)
+    #front = [(1.0, 0.5128205128205128, 195.0),(1.0, 2.7732997481108312, 397.0),(1.0, 0.7787356321839081, 348.0),(1.0, 2.7732997481108312, 397.0),(1.0, 0.5339233038348082, 339.0),(1.0, 0.5128205128205128, 195.0),(1.0, 0.5128205128205128, 195.0),(1.0, 0.5128205128205128, 195.0)]
+
+    global identifier	
+    statfile_purchase = genFileName(algorithm,"purchase",NGEN,MU,identifier) # Stat Generation
+    insert(statfile_purchase,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
+
+  
+    statfile_utility = genFileName(algorithm,"utility",NGEN,MU,identifier) # Stat Generation
+    insert(statfile_utility,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
+
+    statfile_time = genFileName(algorithm,"time",NGEN,MU,identifier) # Stat Generation
+    insert(statfile_time,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
+
+
+    print ("Initial Population")
+    for p in pop:
+	print p
+
+
+
+    # Evaluate the individuals with an invalid fitness
+    invalid_ind = [ind for ind in pop if not ind.fitness.valid]
+    fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
+    for ind, fit in zip(invalid_ind, fitnesses):
+        ind.fitness.values = fit
+
+    record = stats.compile(pop)
+    logbook.record(gen=0, evals=len(invalid_ind), **record)
+    print(logbook.stream)
+
+    # Begin the generational process
+    for gen in range(1, NGEN):
+	oldpop = pop
+        for k, agent in enumerate(pop):
+            a,b,c = toolbox.select(pop)
+            y = toolbox.clone(agent)
+            index = random.randrange(NDIM)
+            for i, value in enumerate(agent):
+                if random.random() < CR:
+                    y[i] = a[i] + F*(b[i]-c[i])
+            y.fitness.values = toolbox.evaluate(y)
+            if y.fitness > agent.fitness:
+                pop[k] = y
+
+        hof.update(pop)
+        record = stats.compile(pop)
+        logbook.record(gen=gen, evals=len(pop), **record)
+        print(logbook.stream)
+
+        if stop_early(oldpop, hof):
+            print("Stopping generation early, no purchases")
+            break
+    
+    map(lambda x:insert(statfile_purchase,str(x.fitness.values[0])),hof)
+    insertnl(statfile_purchase)	
+    map(lambda x:insert(statfile_utility,str(x.fitness.values[1])),hof)
+    insertnl(statfile_utility)	
+    map(lambda x:insert(statfile_time,str(x.fitness.values[2])),hof)
+    insertnl(statfile_time)	
+    
+    volume = hv.compute([x.fitness.values for x in hof if x.fitness.values[0]==1.0])
+
+    print "Hypervolume = ",volume
+    #insert(statfile_hypervolume,str(volume))
+    #insert(statfile_spread,str(spread(oldpop)))
+    #insertnl(statfile_spread)	
+    #insert(statfile_igd,str(igd(oldpop)))
+    #insertnl(statfile_igd)	
+
+
+    r = redis.StrictRedis(host='152.46.19.201', port=6379, db=0)
+    r.flushall() # Remove all keys once done 
+    
+
+    #print("Final population hypervolume is %f" % hypervolume(pop, [11.0, 11.0]))
+
+    return hof, logbook
+
+
 
 
 
@@ -483,7 +597,8 @@ def plotGraph(pop):
     plt.axis("tight")
     plt.xlabel('time', fontsize=18)
     plt.ylabel('utility', fontsize=16)
-    plt.show()
+    #plt.show()
+    plt.savefig(str(uuid.uuid4()))
     
 
 def plotHitRatio(algorithm,main):
@@ -539,15 +654,15 @@ if __name__ == "__main__":
 
     toolbox.register("map", futures.map)
 
-    algo = [main_nsga2 , main_spea2]
-    #algo = [ main_spea2]
+    algo = [main_nsga2 , main_spea2 ]
+    #algo = [ main_de]
 
     for algorithm in algo:
 	#plotHitRatio("NSGA2",main_nsga2)
 
 	with duration():
-		NGEN=4
-		MU=20
+		NGEN=100
+		MU=100
         	pop, stats = algorithm(NGEN=NGEN,MU=MU) # Population multiple of 4
     
     
