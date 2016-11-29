@@ -227,9 +227,9 @@ def main_nsga2(algorithm="NSGA2",seed=None,NGEN=100,MU=100):
     insert(statfile_time,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
 
 
-    print ("Initial Population")
-    for p in pop:
-	print p
+    #print ("Initial Population")
+    #for p in pop:
+    #    print p
 
 
 
@@ -349,11 +349,11 @@ def main_spea2(algorithm="SPEA2",seed=None,NGEN=100,MU=100):
     insert(statfile_time,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
 
 
-
+    """
     print ("Initial Population")
     for p in pop:
 	print p
-
+    """
 
 
     # Evaluate the individuals with an invalid fitness
@@ -474,11 +474,11 @@ def main_de(algorithm="DE",seed=None,NGEN=100,MU=100):
     statfile_time = genFileName(algorithm,"time",NGEN,MU,identifier) # Stat Generation
     insert(statfile_time,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
 
-
+    """
     print ("Initial Population")
     for p in pop:
 	print p
-
+    """
 
 
     # Evaluate the individuals with an invalid fitness
@@ -570,11 +570,11 @@ def main_ga(algorithm="GA",seed=None,NGEN=100,MU=100):
     statfile_time = genFileName(algorithm,"time",NGEN,MU,identifier) # Stat Generation
     insert(statfile_time,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
 
-
+    """
     print ("Initial Population")
     for p in pop:
 	print p
-
+    """
 
 
     # Evaluate the individuals with an invalid fitness
@@ -659,7 +659,7 @@ def main_ga(algorithm="GA",seed=None,NGEN=100,MU=100):
 
 
 
-def plotGraph(pop):
+def plotGraph(pop,algorithm):
 
     global save_figure
     #plotGraph
@@ -672,12 +672,14 @@ def plotGraph(pop):
 
     if front == []:
 	print "Nothing to plot"
-	sys.exit()   
+	return
     #print "Front ",front
-    plt.scatter(front[:,2] , front[:,1],c=front[:,0])
+    plt.scatter(front[:,2] , front[:,1],c=front[:,0],label=str(algorithm))
     plt.axis("tight")
     plt.xlabel('time', fontsize=18)
     plt.ylabel('utility', fontsize=16)
+
+    plt.legend(loc='upper left')
     plt.show()
 
     if save_figure : 
@@ -791,8 +793,9 @@ if __name__ == "__main__":
     		#print "Total Calls ", calls
     		#print "Hit Count" , hits
 
-    		plotGraph(pop)
-
+    		plotGraph(pop,algorithm.__name__)
+	
+	print "Paretos"
 	print paretos
 
 	#Generating best reference points from MU for spread and IGD calculation
