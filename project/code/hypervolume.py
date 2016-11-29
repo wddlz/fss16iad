@@ -48,9 +48,9 @@ class InnerHyperVolume:
 	    if ( len(point) == 3 ): #Our point with purchase utility and time
 		if point[0] !=1.0:
 			return False
-		if point[1] < 0 : #Above 0 Utility
+		if point[1] <= 0 : #Above 0 Utility
 			return False  
-		if point[2] < 0: # Left of time reference
+		if point[2] <= 0: # Left of time reference
 			return False
 		return True
 
@@ -64,9 +64,10 @@ class InnerHyperVolume:
         dimensions = len(referencePoint)
         for point in front:
             # only consider points that dominate the reference point
-	    print "relevant points ",point,referencePoint
+	    #print "relevant points ",point,referencePoint
             if weaklyDominates(point, referencePoint):
                 relevantPoints.append(point)
+	print "Relevant points for comparison to referencepoint : ",len(relevantPoints)
         if any(referencePoint):
             # shift points so that referencePoint == [0, ..., 0]
             # this way the reference point doesn't have to be explicitly used

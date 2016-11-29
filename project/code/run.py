@@ -31,6 +31,18 @@ import numpy
 
 import redis
 
+################################Configurations ##################################################
+
+save_figure = False # To save plots from each graph
+
+simulatePrism = True
+
+
+#################################################################################################
+
+
+
+
 calls = 0 
 hits = 0
 hashmap={}
@@ -111,7 +123,7 @@ toolbox.register("population", tools.initRepeat, list, toolbox.gen_one)
 
 
 def prism(individual):
-	simulatePrism = False
+	global simulatePrism
 	r = redis.StrictRedis(host='152.46.19.201', port=6379, db=0)
 	#Testing prism call 
 	global hashmap,calls,hits
@@ -580,7 +592,7 @@ def main_de(algorithm="DE",seed=None,NGEN=100,MU=100):
 
 def plotGraph(pop):
 
-    
+    global save_figure
     #plotGraph
 
 
@@ -598,8 +610,13 @@ def plotGraph(pop):
     plt.xlabel('time', fontsize=18)
     plt.ylabel('utility', fontsize=16)
     #plt.show()
-    plt.savefig(str(uuid.uuid4()))
-    
+
+    if save_figure : 
+	fname = str(uuid.uuid4())
+	plt.savefig(fname)
+	print "Saved Plot at ", fname ,".PNG"
+    else:
+	print "Saving Plot disabled. No Plot saved"    
 
 def plotHitRatio(algorithm,main):
 
