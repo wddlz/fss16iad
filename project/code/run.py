@@ -37,6 +37,7 @@ save_figure = False # To save plots from each graph
 
 simulatePrism = True
 
+expiryTime = 10000 #seconds Default 10000 seconds
 
 #################################################################################################
 
@@ -127,6 +128,9 @@ def prism(individual):
 	r = redis.StrictRedis(host='152.46.19.201', port=6379, db=0)
 	#Testing prism call 
 	global hashmap,calls,hits
+
+
+	global expiryTime # Expiry Time : Default 10000 seconds
 	# Empty individual decisions
 	calls += 1
 
@@ -165,8 +169,10 @@ def prism(individual):
 	
 			if evaluated_results:
 				r.set(string, evaluated_results)
+				r.expire(string,expiryTime)  #Cache Expiry
 			else:
 				r.set(string, (0,0,0))
+				r.expire(string,expiryTime)
 
 			return ast.literal_eval(r.get(string))
 	except Exception as e: 
