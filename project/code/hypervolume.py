@@ -67,7 +67,7 @@ class InnerHyperVolume:
 	    #print "relevant points ",point,referencePoint
             if weaklyDominates(point, referencePoint):
                 relevantPoints.append(point)
-	print "Relevant points for comparison to referencepoint : ",len(relevantPoints)
+	print "Hypervolume : Relevant points for comparison to referencepoint : ",len(relevantPoints)
         if any(referencePoint):
             # shift points so that referencePoint == [0, ..., 0]
             # this way the reference point doesn't have to be explicitly used

@@ -227,16 +227,6 @@ def main_nsga2(algorithm="NSGA2",seed=None,NGEN=100,MU=100):
     insert(statfile_time,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
 
 
-    #statfile_hypervolume = genFileName(algorithm,"hypervolume",NGEN,MU) # Stat Generation
-    #insert(statfile_hypervolume,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
-
-
-    #statfile_spread = genFileName(algorithm,"spread",NGEN,MU,identifier) # Stat Generation
-    #insert(statfile_spread,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
-
-    #statfile_igd = genFileName(algorithm,"igd",NGEN,MU,identifier) # Stat Generation
-    #insert(statfile_igd,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
-
     print ("Initial Population")
     for p in pop:
 	print p
@@ -286,9 +276,6 @@ def main_nsga2(algorithm="NSGA2",seed=None,NGEN=100,MU=100):
 	#Only final generation required
         #volume = hv.compute([x.fitness.values for x in oldpop if x.fitness.values[0]==1.0])
         #print volume
-	#insert(statfile_hypervolume,str(volume))
-	#insert(statfile_spread,str(spread(oldpop)))
-	#insert(statfile_igd,str(igd(oldpop)))
         
 
 	pop = toolbox.select(pop + offspring, MU)
@@ -309,21 +296,11 @@ def main_nsga2(algorithm="NSGA2",seed=None,NGEN=100,MU=100):
     map(lambda x:insert(statfile_time,str(x.fitness.values[2])),pop)
     insertnl(statfile_time)	
     
-    volume = hv.compute([x.fitness.values for x in pop if x.fitness.values[0]==1.0])
-
-    print "Hypervolume = ",volume
-    #insert(statfile_hypervolume,str(volume))
-    #insert(statfile_spread,str(spread(oldpop)))
-    #insertnl(statfile_spread)	
-    #insert(statfile_igd,str(igd(oldpop)))
-    #insertnl(statfile_igd)	
-
 
     r = redis.StrictRedis(host='152.46.19.201', port=6379, db=0)
     r.flushall() # Remove all keys once done 
     
 
-    #print("Final population hypervolume is %f" % hypervolume(pop, [11.0, 11.0]))
 
     return pop, logbook
 
@@ -372,15 +349,6 @@ def main_spea2(algorithm="SPEA2",seed=None,NGEN=100,MU=100):
     insert(statfile_time,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
 
 
-    #statfile_hypervolume = genFileName(algorithm,"hypervolume",NGEN,MU) # Stat Generation
-    #insert(statfile_hypervolume,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
-
-
-    #statfile_spread = genFileName(algorithm,"spread",NGEN,MU,identifier) # Stat Generation
-    #insert(statfile_spread,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
-
-    #statfile_igd = genFileName(algorithm,"igd",NGEN,MU,identifier) # Stat Generation
-    #insert(statfile_igd,algorithm+"_gen"+str(NGEN)+"_pop"+str(MU))
 
     print ("Initial Population")
     for p in pop:
@@ -431,9 +399,6 @@ def main_spea2(algorithm="SPEA2",seed=None,NGEN=100,MU=100):
 	#Only final generation required
         #volume = hv.compute([x.fitness.values for x in oldpop if x.fitness.values[0]==1.0])
         #print volume
-	#insert(statfile_hypervolume,str(volume))
-	#insert(statfile_spread,str(spread(oldpop)))
-	#insert(statfile_igd,str(igd(oldpop)))
         
 
 	pop = toolbox.select(pop + offspring, MU)
@@ -454,21 +419,11 @@ def main_spea2(algorithm="SPEA2",seed=None,NGEN=100,MU=100):
     map(lambda x:insert(statfile_time,str(x.fitness.values[2])),pop)
     insertnl(statfile_time)	
     
-    volume = hv.compute([x.fitness.values for x in pop if x.fitness.values[0]==1.0])
-
-    print "Hypervolume = ",volume
-    #insert(statfile_hypervolume,str(volume))
-    #insert(statfile_spread,str(spread(oldpop)))
-    #insertnl(statfile_spread)	
-    #insert(statfile_igd,str(igd(oldpop)))
-    #insertnl(statfile_igd)	
-
 
     r = redis.StrictRedis(host='152.46.19.201', port=6379, db=0)
     r.flushall() # Remove all keys once done 
     
 
-    #print("Final population hypervolume is %f" % hypervolume(pop, [11.0, 11.0]))
 
     return pop, logbook
 
@@ -506,8 +461,6 @@ def main_de(algorithm="DE",seed=None,NGEN=100,MU=100):
     print "Algorithm = ",algorithm
     print "Generation = ",NGEN
     print "Population Size = ",MU
-    referencePoint = (2.0, 0, 0)
-    hv = InnerHyperVolume(referencePoint)
     #front = [(1.0, 0.5128205128205128, 195.0),(1.0, 2.7732997481108312, 397.0),(1.0, 0.7787356321839081, 348.0),(1.0, 2.7732997481108312, 397.0),(1.0, 0.5339233038348082, 339.0),(1.0, 0.5128205128205128, 195.0),(1.0, 0.5128205128205128, 195.0),(1.0, 0.5128205128205128, 195.0)]
 
     global identifier	
@@ -568,15 +521,6 @@ def main_de(algorithm="DE",seed=None,NGEN=100,MU=100):
     map(lambda x:insert(statfile_time,str(x.fitness.values[2])),hof)
     insertnl(statfile_time)	
     
-    volume = hv.compute([x.fitness.values for x in hof if x.fitness.values[0]==1.0])
-
-    print "Hypervolume = ",volume
-    #insert(statfile_hypervolume,str(volume))
-    #insert(statfile_spread,str(spread(oldpop)))
-    #insertnl(statfile_spread)	
-    #insert(statfile_igd,str(igd(oldpop)))
-    #insertnl(statfile_igd)	
-
 
     r = redis.StrictRedis(host='152.46.19.201', port=6379, db=0)
     r.flushall() # Remove all keys once done 
@@ -664,6 +608,17 @@ def stop_early(oldPop, curPop):
     return False
     
 
+def ourstats(measure,mname):
+	#Measure can be spread,igd,hypervolume
+
+	print "--------------------------------------"
+	print "========Stat for ",mname," ==========="
+	print "--------------------------------------"
+	for no,i in enumerate(measure):
+		print (no+1),"\t",i,"\t",measure[i]
+
+
+
 if __name__ == "__main__":
     identifier = str(uuid.uuid4())	
 
@@ -671,16 +626,19 @@ if __name__ == "__main__":
 
     toolbox.register("map", futures.map)
 
-    #algo = [main_nsga2 , main_spea2 ]
-    algo = [ main_de]
+    algo = [main_nsga2 , main_spea2 ,main_de]
+    #algo = [ main_de]
     #algo = [main_ga]
     paretos ={}
+    hypervolume ={}
+    spread ={}
+    igd = {}
 
     for algorithm in algo:
 	#plotHitRatio("NSGA2",main_nsga2)
 
 	with duration():
-		NGEN=100
+		NGEN=20
 		MU=100
         	pop, stats = algorithm(NGEN=NGEN,MU=MU) # Population multiple of 4
     
@@ -688,14 +646,38 @@ if __name__ == "__main__":
     		#print " Final Population "
     		#for i in pop :
 		#	print i,i.fitness.values
+		
 
+
+		#Final Pareto Frontier
 		paretos[algorithm.__name__] = [ i.fitness.values for i in pop ]
 
-    		print "Generate stats for objectives using `sh printStat.sh -u "+str(identifier)+"`" 
+		# Hypervolume
+		
+    		referencePoint = (2.0, 0, 0)
+    		hv = InnerHyperVolume(referencePoint)
+    		volume = hv.compute([x.fitness.values for x in pop if x.fitness.values[0]==1.0])
+		hypervolume[algorithm.__name__] = volume
+    		
+
+		# Stat.py
+		print "Generate stats for objectives using `sh printStat.sh -u "+str(identifier)+"`" 
 
     		#print "Total Calls ", calls
     		#print "Hit Count" , hits
 
-    		plotGraph(pop)
+    		#plotGraph(pop)
 
-	print paretos
+	#print paretos
+
+	#Generating best reference points from MU for spread and IGD calculation
+	
+	#referencepoints = bestPoints(paretos,MU=MU) # generate best points  of size MU
+	#spread = calculateSpread(paretos,referencepoints) # Return a dictionary using spread[nameofalgo( got from ` for i in paretos`)]
+	#igd = calculateIGD(paretos,referencepoints) # return dictionary for igd, stats printed below
+
+	#Print stats
+	ourstats(hypervolume,"Hypervolume")
+	ourstats(hypervolume,"Spread")
+	ourstats(hypervolume,"IGD")
+
