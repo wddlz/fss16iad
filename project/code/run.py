@@ -272,6 +272,8 @@ def main_nsga2(algorithm="NSGA2",seed=None,NGEN=100,MU=100):
 
         # Select the next generation population
         oldpop = pop
+        oldrecord = record
+
 	#map(lambda x:insert(statfile_purchase,str(x.fitness.values[0])),oldpop)
 	#map(lambda x:insert(statfile_utility,str(x.fitness.values[1])),oldpop)
 	#map(lambda x:insert(statfile_time,str(x.fitness.values[2])),oldpop)
@@ -279,16 +281,13 @@ def main_nsga2(algorithm="NSGA2",seed=None,NGEN=100,MU=100):
 	#Only final generation required
         #volume = hv.compute([x.fitness.values for x in oldpop if x.fitness.values[0]==1.0])
         #print volume
-        
 
 	pop = toolbox.select(pop + offspring, MU)
         record = stats.compile(pop)
         logbook.record(gen=gen, evals=len(invalid_ind), **record)
         print(logbook.stream)
-	
-	
 
-        if stop_early(oldpop, pop):
+        if stop_early(oldpop, pop, gen, oldrecord, record):
             print("Stopping generation early, no purchases")
             break
 	
@@ -395,6 +394,7 @@ def main_spea2(algorithm="SPEA2",seed=None,NGEN=100,MU=100):
 
         # Select the next generation population
         oldpop = pop
+        oldrecord = record
 	#map(lambda x:insert(statfile_purchase,str(x.fitness.values[0])),oldpop)
 	#map(lambda x:insert(statfile_utility,str(x.fitness.values[1])),oldpop)
 	#map(lambda x:insert(statfile_time,str(x.fitness.values[2])),oldpop)
@@ -408,10 +408,8 @@ def main_spea2(algorithm="SPEA2",seed=None,NGEN=100,MU=100):
         record = stats.compile(pop)
         logbook.record(gen=gen, evals=len(invalid_ind), **record)
         print(logbook.stream)
-	
-	
 
-        if stop_early(oldpop, pop):
+        if stop_early(oldpop, pop, gen, oldrecord, record):
             print("Stopping generation early, no purchases")
             break
 	
@@ -496,7 +494,8 @@ def main_de(algorithm="DE",seed=None,NGEN=100,MU=100):
 
     # Begin the generational process
     for gen in range(1, NGEN):
-	oldpop = pop
+        oldpop = pop
+        oldrecord = record
         for k, agent in enumerate(pop):
             a,b,c = toolbox.select(pop)
             y = toolbox.clone(agent)
@@ -510,12 +509,12 @@ def main_de(algorithm="DE",seed=None,NGEN=100,MU=100):
 	    #print hof
         hof.update(pop)
 	
-	#pop = tools.selBest(pop,MU)
+	    #pop = tools.selBest(pop,MU)
         record = stats.compile(pop)
         logbook.record(gen=gen, evals=len(pop), **record)
         print(logbook.stream)
 
-        if stop_early(oldpop, hof):
+        if stop_early(oldpop, hof, gen, oldrecord, record):
             print("Stopping generation early, no purchases")
             break
 
@@ -602,9 +601,9 @@ def main_ga(algorithm="GA",seed=None,NGEN=100,MU=100):
     for gen in range(1, NGEN):
         # Select the next generation population
         oldpop = pop
-     	
+        oldrecord = record
 
-	# Select the next generation individuals
+        # Select the next generation individuals
         offspring = toolbox.select(pop, len(pop))
         # Clone the selected individuals
         offspring = list(map(toolbox.clone, offspring))
@@ -641,10 +640,8 @@ def main_ga(algorithm="GA",seed=None,NGEN=100,MU=100):
         record = stats.compile(pop)
         logbook.record(gen=gen, evals=len(invalid_ind), **record)
         print(logbook.stream)
-	
-	
 
-        if stop_early(oldpop, pop):
+        if stop_early(oldpop, pop, gen, oldrecord, record):
             print("Stopping generation early, no purchases")
             break
 	
@@ -731,17 +728,32 @@ def plotHitRatio(algorithm,main):
 
 # function to exit early based on lack of purchases made
 # if purchases made == 0, decisions are overtuned and buyer/seller cannot reach an agreement
-def stop_early(oldPop, curPop):
+def stop_early(oldpop, curpop, gen, oldrecord, currecord, acceptance=.9, mingen=20):
     purchase_count = 0.0
+    pop_count = 0
+    old_purchase_count = 0.0
+    old_pop_count = 0
 
-    for p in curPop:
+    for p in curpop:
         purchase_count += p.fitness.values[0]
+        pop_count += 1
 
+    for o in oldpop:
+        old_purchase_count += o.fitness.values[0]
+        old_pop_count += 1
+
+    # no purchases
     if purchase_count < 1.0:
+        return True
+    # purchases not improved and greater than acceptable percentage (default 90%)
+    elif gen >= mingen and purchase_count == old_purchase_count and (purchase_count / pop_count) > acceptance:
+        return True
+    # std, min, max is not changed from previous generation
+    elif gen >= mingen and currecord == oldrecord:
         return True
 
     return False
-    
+
 
 def ourstats(measure,mname):
 	#Measure can be spread,igd,hypervolume
