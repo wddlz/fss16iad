@@ -112,15 +112,6 @@ def gen_decs():
 	return [b_rp, s_rp, s_rp, b_rp, tb, tbb, ts, tsb, bcinc, bbinc, scdec, sbdec,  kb, ks, offset]
 
 
-creator.create("Fitness", base.Fitness, weights=(4.0, -1.0, 1.0),crowding_dist=None)
-creator.create("Individual", list, fitness=creator.Fitness)
-
-toolbox = base.Toolbox()
-toolbox.register("decs", aop_decs)
-toolbox.register("gen_one", tools.initIterate, creator.Individual, toolbox.decs)
-toolbox.register("population", tools.initRepeat, list, toolbox.gen_one)
-
-#pop = toolbox.population(n=pop_size)
 
 
 def prism(individual):
@@ -165,7 +156,7 @@ def prism(individual):
 			else :
 	
 				#Simulate evaluate results
-				evaluated_results = (1,random.random(),random.random())
+				evaluated_results = (1,random.random(),random.randint(0,1000))
 	
 			if evaluated_results:
 				r.set(string, evaluated_results)
@@ -451,7 +442,7 @@ def main_de(algorithm="DE",seed=None,NGEN=100,MU=100):
     toolbox.register("select", tools.selRandom, k=3)
     toolbox.register("evaluate", evaluateInd)
     toolbox.register("mutate", tools.mutUniformInt, low = 0 , up = 1, indpb=0.01)
-    #hof = tools.HallOfFame(MU,similar = eq)
+    #hof = tools.HallOfFame(MU)
     hof = tools.ParetoFront()
     stats = tools.Statistics(lambda ind: ind.fitness.values)
     stats.register("avg", numpy.mean, axis=0)
@@ -510,8 +501,10 @@ def main_de(algorithm="DE",seed=None,NGEN=100,MU=100):
             y.fitness.values = toolbox.evaluate(y)
             if y.fitness > agent.fitness:
                 pop[k] = y
-
+	    #print hof
         hof.update(pop)
+	
+	#pop = tools.selBest(pop,MU)
         record = stats.compile(pop)
         logbook.record(gen=gen, evals=len(pop), **record)
         print(logbook.stream)
@@ -519,7 +512,9 @@ def main_de(algorithm="DE",seed=None,NGEN=100,MU=100):
         if stop_early(oldpop, hof):
             print("Stopping generation early, no purchases")
             break
-    
+
+
+
     map(lambda x:insert(statfile_purchase,str(x.fitness.values[0])),hof)
     insertnl(statfile_purchase)	
     map(lambda x:insert(statfile_utility,str(x.fitness.values[1])),hof)
@@ -682,10 +677,11 @@ def plotGraph(pop,algorithm):
     #print "Front ",front
     plt.scatter(front[:,2] , front[:,1],c=front[:,0],label=str(algorithm))
     plt.axis("tight")
+
     plt.xlabel('time', fontsize=18)
     plt.ylabel('utility', fontsize=16)
 
-    plt.legend(loc='upper left')
+    plt.legend(loc='lower right')
     plt.show()
 
     if save_figure : 
@@ -757,6 +753,18 @@ if __name__ == "__main__":
 
     from scoop import futures
 
+
+
+    creator.create("Fitness", base.Fitness, weights=(4.0, 1.0, -1.0),crowding_dist=None)
+    creator.create("Individual", list, fitness=creator.Fitness)
+
+    toolbox = base.Toolbox()
+    toolbox.register("decs", aop_decs)
+    toolbox.register("gen_one", tools.initIterate, creator.Individual, toolbox.decs)
+    toolbox.register("population", tools.initRepeat, list, toolbox.gen_one)
+
+#pop = toolbox.population(n=pop_size)
+
     toolbox.register("map", futures.map)
 
     algo = [main_nsga2 , main_spea2 ,main_de,main_ga]
@@ -776,9 +784,9 @@ if __name__ == "__main__":
         	pop, stats = algorithm(NGEN=NGEN,MU=MU) # Population multiple of 4
     
     
-    		#print " Final Population "
-    		#for i in pop :
-		#	print i,i.fitness.values
+    		print " Final Population "
+    		for i in pop :
+			print i,i.fitness.values
 		
 
 
@@ -787,10 +795,12 @@ if __name__ == "__main__":
 
 		# Hypervolume
 		
-    		referencePoint = (2.0, 0, 0)
+    		referencePoint = (2.0, 0, 1000)
     		hv = InnerHyperVolume(referencePoint)
     		volume = hv.compute([x.fitness.values for x in pop if x.fitness.values[0]==1.0])
-		hypervolume[algorithm.__name__] = volume
+
+		shift = 1000 * 4 # Deal with reference point on right lower
+		hypervolume[algorithm.__name__] = shift + volume
     		
 
 		# Stat.py
@@ -799,19 +809,19 @@ if __name__ == "__main__":
     		#print "Total Calls ", calls
     		#print "Hit Count" , hits
 
-    		plotGraph(pop,algorithm.__name__)
+    	plotGraph(pop,algorithm.__name__)
 	
-	print "Paretos"
-	print paretos
+    print "Paretos"
+    print paretos
 
-	#Generating best reference points from MU for spread and IGD calculation
+    #Generating best reference points from MU for spread and IGD calculation
 	
-	#referencepoints = bestPoints(paretos,MU=MU) # generate best points  of size MU
-	#spread = calculateSpread(paretos,referencepoints) # Return a dictionary using spread[nameofalgo( got from ` for i in paretos`)]
-	#igd = calculateIGD(paretos,referencepoints) # return dictionary for igd, stats printed below
+    #referencepoints = bestPoints(paretos,MU=MU) # generate best points  of size MU
+    #spread = calculateSpread(paretos,referencepoints) # Return a dictionary using spread[nameofalgo( got from ` for i in paretos`)]
+    #igd = calculateIGD(paretos,referencepoints) # return dictionary for igd, stats printed below
 
-	#Print stats
-	ourstats(hypervolume,"Hypervolume")
-	ourstats(spread,"Spread")
-	ourstats(igd,"IGD")
+    #Print stats
+    ourstats(hypervolume,"Hypervolume")
+    ourstats(spread,"Spread")
+    ourstats(igd,"IGD")
 
