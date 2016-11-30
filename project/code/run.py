@@ -766,10 +766,10 @@ if __name__ == "__main__":
 
     toolbox.register("map", futures.map)
 
-    #algo = [main_nsga2 , main_spea2 ,main_de,main_ga]
+    algo = [main_nsga2 , main_spea2 ,main_ga]
     #algo = [ main_de]
     #algo = [main_de,main_ga]
-    algo=[main_ga]
+    #algo=[main_ga]
     paretos ={}
     hypervolume ={}
     spread ={}

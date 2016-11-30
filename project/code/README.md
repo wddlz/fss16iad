@@ -1,6 +1,19 @@
 # Topic
 ##Description
 ## Instructions
+
+Updated:
+
+1. Run the uwsgi application using ```uwsgi --ini app.ini```
+
+2. Make sure the nginx server with nginx.conf is running with proper sockets
+
+3. Run algorithms by ```python -m scoop -n 50 run.py```
+
+
+
+Old Instructions:
+
 1. To run Flask app on AWS - ```gunicorn -w 10 -b 0.0.0.0:5001 app:app```
 
 **Update** : Replaced gunicorn with uwsgi . 
@@ -25,6 +38,7 @@ Add this code to your application -
  ```
     
 and run using ```python nsga2.py ```
+
 
 
     
