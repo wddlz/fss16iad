@@ -33,9 +33,9 @@ import redis
 
 ################################Configurations ##################################################
 
-save_figure = False # To save plots from each graph
+save_figure = True # To save plots from each graph
 
-simulatePrism = True
+simulatePrism = False
 
 expiryTime = 10000 #seconds Default 10000 seconds
 
@@ -112,6 +112,12 @@ def gen_decs():
 	return [b_rp, s_rp, s_rp, b_rp, tb, tbb, ts, tsb, bcinc, bbinc, scdec, sbdec,  kb, ks, offset]
 
 
+creator.create("Fitness", base.Fitness, weights=(4.0, 1.0, -1.0),crowding_dist=None)
+creator.create("Individual", list, fitness=creator.Fitness)
+toolbox = base.Toolbox()
+toolbox.register("decs", aop_decs)
+toolbox.register("gen_one", tools.initIterate, creator.Individual, toolbox.decs)
+toolbox.register("population", tools.initRepeat, list, toolbox.gen_one)
 
 
 def prism(individual):
@@ -682,7 +688,7 @@ def plotGraph(pop,algorithm):
     plt.ylabel('utility', fontsize=16)
 
     plt.legend(loc='lower right')
-    plt.show()
+    #plt.show()
 
     if save_figure : 
 	fname = str(uuid.uuid4())
@@ -755,13 +761,6 @@ if __name__ == "__main__":
 
 
 
-    creator.create("Fitness", base.Fitness, weights=(4.0, 1.0, -1.0),crowding_dist=None)
-    creator.create("Individual", list, fitness=creator.Fitness)
-
-    toolbox = base.Toolbox()
-    toolbox.register("decs", aop_decs)
-    toolbox.register("gen_one", tools.initIterate, creator.Individual, toolbox.decs)
-    toolbox.register("population", tools.initRepeat, list, toolbox.gen_one)
 
 #pop = toolbox.population(n=pop_size)
 
@@ -779,7 +778,7 @@ if __name__ == "__main__":
 	#plotHitRatio("NSGA2",main_nsga2)
 
 	with duration():
-		NGEN=20
+		NGEN=100
 		MU=100
         	pop, stats = algorithm(NGEN=NGEN,MU=MU) # Population multiple of 4
     
