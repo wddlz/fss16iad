@@ -544,7 +544,7 @@ def main_ga(algorithm="GA",seed=None,NGEN=100,MU=100):
     random.seed(seed)
     #NGEN       # Generation
     #MU     # Population Size
-    CXPB, MUTPB, NGEN = 0.5, 0.2, 40
+    CXPB, MUTPB = 0.5, 0.2
 
     toolbox.register("mate", tools.cxTwoPoint)
     toolbox.register("mutate", tools.mutUniformInt, low = 0 , up = 1, indpb=0.01)
@@ -766,9 +766,10 @@ if __name__ == "__main__":
 
     toolbox.register("map", futures.map)
 
-    algo = [main_nsga2 , main_spea2 ,main_de,main_ga]
+    #algo = [main_nsga2 , main_spea2 ,main_de,main_ga]
     #algo = [ main_de]
-    #algo = [main_ga]
+    #algo = [main_de,main_ga]
+    algo=[main_ga]
     paretos ={}
     hypervolume ={}
     spread ={}
