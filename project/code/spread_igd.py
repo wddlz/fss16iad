@@ -2,7 +2,6 @@ import random
 import sys
 
 def eucledian(one, two):
-  # TODO 4: Code up the eucledian distance. https://en.wikipedia.org/wiki/Euclidean_distance
   dist = 0
   for i in xrange(len(one)):
     dist = dist + (one[i]-two[i])**2
@@ -10,9 +9,6 @@ def eucledian(one, two):
   return dist
 
 def sort_solutions(solutions):
-  """
-  Sort a list of list before computing spread
-  """
   def sorter(lst):
     m = len(lst)
     weights = reversed([10 ** i for i in xrange(m)])
@@ -44,7 +40,6 @@ def spread(obtained, ideals):
   for i in range(len(s_obtained)-1):
     distances.append(eucledian(s_obtained[i], s_obtained[i+1]))
   d_bar = sum(distances)/len(distances)
-  # TODO 5: Compute the value of spread using the definition defined in the previous cell.
   num = 0;
   for d_i in distances:
     num = num + abs(d_i-d_bar)
