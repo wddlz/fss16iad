@@ -35,9 +35,9 @@ import spread_igd
 
 ################################Configurations ##################################################
 
-save_figure = False # To save plots from each graph
+save_figure = True # To save plots from each graph
 
-simulatePrism = True
+simulatePrism = False
 
 expiryTime = 10000 #seconds Default 10000 seconds
 
@@ -692,9 +692,9 @@ def plotGraph(pop,algorithm):
     if save_figure : 
 	fname = str(uuid.uuid4())
 	plt.savefig(fname)
-	print "Saved Plot at ", fname ,".PNG"
+	print "Saved Plot at ", fname ,".PNG for ", algorithm
     else:
-	print "Saving Plot disabled. No Plot saved"    
+	print "Saving Plot disabled. No Plot saved for ", algorithm    
 
 def plotHitRatio(algorithm,main):
 
@@ -801,7 +801,7 @@ if __name__ == "__main__":
 	#plotHitRatio("NSGA2",main_nsga2)
 
 	with duration():
-		NGEN=2
+		NGEN=100
 		MU=100
         	pop, stats = algorithm(NGEN=NGEN,MU=MU) # Population multiple of 4
     
@@ -831,10 +831,11 @@ if __name__ == "__main__":
     		#print "Total Calls ", calls
     		#print "Hit Count" , hits
 
-    	plotGraph(pop,algorithm.__name__)
+    for i in paretos:
+    	plotGraph(pop,i)
 	
     print "Paretos"
-    #print paretos
+    print paretos
 
     #Generating best reference points from MU for spread and IGD calculation
 	
