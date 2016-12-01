@@ -37,7 +37,7 @@ import spread_igd
 
 save_figure = False # To save plots from each graph
 
-simulatePrism = False
+simulatePrism = True
 
 expiryTime = 10000 #seconds Default 10000 seconds
 
@@ -199,8 +199,8 @@ def main_nsga2(algorithm="NSGA2",seed=None,NGEN=100,MU=100):
     BOUND_LOW = (B_RP[0],S_RP[0] , B_IP[0], S_IP[0] ,Tb[0],TbB[0] ,Ts[0] ,TsB[0] ,bCinc[0] ,bBinc[0] ,sCdec[0] ,sBdec[0] ,Kb[0] ,Ks[0] ,Offset[0] )
     BOUND_UP = (B_RP[1],S_RP[1] , B_IP[1], S_IP[1] ,Tb[1],TbB[1] ,Ts[1] ,TsB[1] ,bCinc[1] ,bBinc[1] ,sCdec[1] ,sBdec[1] ,Kb[1] ,Ks[1] ,Offset[1] )
 
-    toolbox.register("mate", tools.cxSimulatedBinaryBounded, low=BOUND_LOW, up=BOUND_UP, eta=20.0)
-    toolbox.register("mutate", tools.mutPolynomialBounded, low=BOUND_LOW, up=BOUND_UP, eta=20.0, indpb=1.0/NDIM)
+    toolbox.register("mate", tools.cxSimulatedBinaryBounded, low=BOUND_LOW, up=BOUND_UP, eta=1.0)
+    toolbox.register("mutate", tools.mutPolynomialBounded, low=BOUND_LOW, up=BOUND_UP, eta=1.0, indpb=1.0/NDIM)
 
     toolbox.register("select", tools.selNSGA2)
     toolbox.register("evaluate", evaluateInd)
@@ -323,8 +323,8 @@ def main_spea2(algorithm="SPEA2",seed=None,NGEN=100,MU=100):
     BOUND_LOW = (B_RP[0],S_RP[0] , B_IP[0], S_IP[0] ,Tb[0],TbB[0] ,Ts[0] ,TsB[0] ,bCinc[0] ,bBinc[0] ,sCdec[0] ,sBdec[0] ,Kb[0] ,Ks[0] ,Offset[0] )
     BOUND_UP = (B_RP[1],S_RP[1] , B_IP[1], S_IP[1] ,Tb[1],TbB[1] ,Ts[1] ,TsB[1] ,bCinc[1] ,bBinc[1] ,sCdec[1] ,sBdec[1] ,Kb[1] ,Ks[1] ,Offset[1] )
 
-    toolbox.register("mate", tools.cxSimulatedBinaryBounded, low=BOUND_LOW, up=BOUND_UP, eta=20.0)
-    toolbox.register("mutate", tools.mutPolynomialBounded, low=BOUND_LOW, up=BOUND_UP, eta=20.0, indpb=1.0/NDIM)
+    toolbox.register("mate", tools.cxSimulatedBinaryBounded, low=BOUND_LOW, up=BOUND_UP, eta=0.0)
+    toolbox.register("mutate", tools.mutPolynomialBounded, low=BOUND_LOW, up=BOUND_UP, eta=0.0, indpb=1.0/NDIM)
 
 
     toolbox.register("select", tools.selSPEA2)
@@ -554,7 +554,7 @@ def main_ga(algorithm="GA",seed=None,NGEN=100,MU=100):
     random.seed(seed)
     #NGEN       # Generation
     #MU     # Population Size
-    CXPB, MUTPB = 0.9, 0.01
+    CXPB, MUTPB = 1.0, 0.01
 
     toolbox.register("mate", tools.cxTwoPoint)
 
@@ -610,7 +610,7 @@ def main_ga(algorithm="GA",seed=None,NGEN=100,MU=100):
 
     # This is just to assign the crowding distance to the individuals
     # no actual selection is done
-    pop = toolbox.select(pop, len(pop))
+    #pop = toolbox.select(pop, len(pop))
     
     record = stats.compile(pop)
     logbook.record(gen=0, evals=len(invalid_ind), **record)
@@ -748,6 +748,18 @@ def plotHitRatio(algorithm,main):
 # function to exit early based on lack of purchases made
 # if purchases made == 0, decisions are overtuned and buyer/seller cannot reach an agreement
 def stop_early(oldpop, curpop, gen, oldrecord, currecord, acceptance=.9, mingen=0):
+    #print currecord
+    #print oldrecord
+    count =0 
+    termcount = 4 # 4 records
+    for r in currecord:
+	#print r
+        #print (currecord.get(r) - oldrecord.get(r)).any()
+        if not((currecord.get(r) - oldrecord.get(r)).any()):
+		count+=1
+		if count== termcount :
+			return True
+	#	return True
     return False
     purchase_count = 0.0
     pop_count = 0
