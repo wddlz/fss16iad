@@ -35,9 +35,9 @@ import spread_igd
 
 ################################Configurations ##################################################
 
-save_figure = True # To save plots from each graph
+save_figure = False # To save plots from each graph
 
-simulatePrism = False
+simulatePrism = True
 
 expiryTime = 10000 #seconds Default 10000 seconds
 
@@ -831,11 +831,18 @@ if __name__ == "__main__":
     		#print "Total Calls ", calls
     		#print "Hit Count" , hits
 
-    for i in paretos:
-    	plotGraph(pop,i)
+    #for i in paretos:
+    	#plotGraph(pop,i)
+
+
 	
     print "Paretos"
     print paretos
+	
+    with open("pareto_"+identifier, "a") as myfile:
+                myfile.write(str(paretos))
+    print "python plotGraph.py ",identifier
+
 
     #Generating best reference points from MU for spread and IGD calculation
 	
