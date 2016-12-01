@@ -30,12 +30,14 @@ import matplotlib.pyplot as plt
 import numpy
 
 import redis
+import spread_igd
+
 
 ################################Configurations ##################################################
 
-save_figure = True # To save plots from each graph
+save_figure = False # To save plots from each graph
 
-simulatePrism = False
+simulatePrism = True
 
 expiryTime = 10000 #seconds Default 10000 seconds
 
@@ -765,6 +767,13 @@ def ourstats(measure,mname):
 		print (no+1),"\t",i,"\t",measure[i]
 
 
+def bestPoints(pareto,number):
+	
+	
+	reference =  tools.selBest(paretopop,number)
+
+	return [x.fitness.values for x in reference]
+
 
 if __name__ == "__main__":
     identifier = str(uuid.uuid4())	
@@ -774,7 +783,7 @@ if __name__ == "__main__":
 
 
 
-#pop = toolbox.population(n=pop_size)
+    #pop = toolbox.population(n=pop_size)
 
     toolbox.register("map", futures.map)
 
@@ -786,12 +795,13 @@ if __name__ == "__main__":
     hypervolume ={}
     spread ={}
     igd = {}
-
+  
+    paretopop = [] # Total population
     for algorithm in algo:
 	#plotHitRatio("NSGA2",main_nsga2)
 
 	with duration():
-		NGEN=100
+		NGEN=2
 		MU=100
         	pop, stats = algorithm(NGEN=NGEN,MU=MU) # Population multiple of 4
     
@@ -804,14 +814,14 @@ if __name__ == "__main__":
 
 		#Final Pareto Frontier
 		paretos[algorithm.__name__] = [ i.fitness.values for i in pop ]
-
+		paretopop.extend( pop)
 		# Hypervolume
 		
     		referencePoint = (2.0, 0, 1000)
     		hv = InnerHyperVolume(referencePoint)
     		volume = hv.compute([x.fitness.values for x in pop if x.fitness.values[0]==1.0])
 
-		shift = 1000 * 4 # Deal with reference point on right lower
+		shift = 10000 * 3 # Deal with reference point on right lower
 		hypervolume[algorithm.__name__] = shift + volume
     		
 
@@ -824,13 +834,21 @@ if __name__ == "__main__":
     	plotGraph(pop,algorithm.__name__)
 	
     print "Paretos"
-    print paretos
+    #print paretos
 
     #Generating best reference points from MU for spread and IGD calculation
 	
-    #referencepoints = bestPoints(paretos,MU=MU) # generate best points  of size MU
-    #spread = calculateSpread(paretos,referencepoints) # Return a dictionary using spread[nameofalgo( got from ` for i in paretos`)]
-    #igd = calculateIGD(paretos,referencepoints) # return dictionary for igd, stats printed below
+    referencepoints = bestPoints(paretopop,MU) # generate best points  of size MU
+    
+    print "Reference Points ", referencepoints
+   
+    #spread = spread_igd.spread(paretos,referencepoints) # Return a dictionary using spread[nameofalgo( got from ` for i in paretos`)]
+    #igd = spread_igd.igd(paretos,referencepoints) # return dictionary for igd, stats printed below
+
+    for i in paretos:
+	spread[i] = spread_igd.spread( paretos[i],referencepoints)
+	igd[i] = spread_igd.igd (paretos[i],referencepoints)
+    
 
     #Print stats
     ourstats(hypervolume,"Hypervolume")
