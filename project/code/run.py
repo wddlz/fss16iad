@@ -730,7 +730,7 @@ def plotHitRatio(algorithm,main):
 
 # function to exit early based on lack of purchases made
 # if purchases made == 0, decisions are overtuned and buyer/seller cannot reach an agreement
-def stop_early(oldpop, curpop, gen, oldrecord, currecord, acceptance=.9, mingen=20):
+def stop_early(oldpop, curpop, gen, oldrecord, currecord, acceptance=.9, mingen=0):
     purchase_count = 0.0
     pop_count = 0
     old_purchase_count = 0.0
