@@ -744,14 +744,14 @@ def stop_early(oldpop, curpop, gen, oldrecord, currecord, acceptance=.9, mingen=
         old_purchase_count += o.fitness.values[0]
         old_pop_count += 1
 
-    # no purchases
-    if purchase_count < 1.0:
-        return True
-    # purchases not improved and greater than acceptable percentage (default 90%)
-    elif gen >= mingen and purchase_count == old_purchase_count and (purchase_count / pop_count) > acceptance:
-        return True
+    # # no purchases
+    # if purchase_count < 1.0:
+    #     return True
+    # # purchases not improved and greater than acceptable percentage (default 90%)
+    # elif gen >= mingen and purchase_count == old_purchase_count and (purchase_count / pop_count) > acceptance:
+    #     return True
     # std, min, max is not changed from previous generation
-    elif gen >= mingen and currecord == oldrecord:
+    if gen >= mingen and currecord == oldrecord:
         return True
 
     return False
