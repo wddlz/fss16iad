@@ -59,7 +59,10 @@ The buyer makes a bid and if the seller agrees, purchase is completed. Otherwise
 The seller waits for a bid and if accepted, the purchase is done. Otherwise he makes a counter bid and the process continues till either the seller or buyer agrees to a bid or cbid. 
 
 #### 	4. Strategy
-The buyer and seller follow two strategies - Conceder (if the player is willing to yield a lot in the early phase of negotiation) and Boulder (if a player is willing to concede considerably only when it's time deadline is approaching). The strategy can be linear or nonlinear.
+The buyer and seller follow two strategies - Conceder (if the player is willing to yield a lot in the early phase of negotiation) and Boulder (if a player is willing to concede considerably only when it's time deadline is approaching).
+![state](./screenshots/relatedwork2.PNG )
+
+In the above diagram , we can see the Buyer strategies for both linear and nonlinear . RP - Reserved Price and IP - Initial Price.
 
 #### 	5. Decisions
 | No 	| Decision                          	| Description                                                                                                 	| Range we used      	|
