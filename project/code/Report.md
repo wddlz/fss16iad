@@ -55,8 +55,8 @@ The model can have the following states as seen in the figure above:
 7. CBid Result : Buyer’s response on seller’s counter bid
 
 
-The buyer makes a bid and if the seller agrees purchase is completed else waits for counter bid (cbid). If counter bid is rejected , the buyer bids again.
-The seller waits for a bid and if accepted purchase is done, else makes a counter bid and the process continues till either the seller or buyer agrees to a bid or cbid. 
+The buyer makes a bid and if the seller agrees, purchase is completed. Otherwise, he waits for a counter bid (cbid). If counter bid is rejected , the buyer bids again.
+The seller waits for a bid and if accepted, the purchase is done. Otherwise he makes a counter bid and the process continues till either the seller or buyer agrees to a bid or cbid. 
 
 ### Strategy
-The buyer and seller follow two strategies - Conceder (if the player is willing to yield a lot in the early phase of negotiation) and Boulder (if a player is willing to concede considerably only when it's time deadline is approaching). The Strategy can be Linear or nonlinear.
+The buyer and seller follow two strategies - Conceder (if the player is willing to yield a lot in the early phase of negotiation) and Boulder (if a player is willing to concede considerably only when it's time deadline is approaching). The strategy can be linear or nonlinear.
