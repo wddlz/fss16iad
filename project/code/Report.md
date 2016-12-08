@@ -121,5 +121,91 @@ else :
 	time = MAXINT
 utility = -1 
 ```
+Following figure shows the example simulation.
+
+![cli](./screenshots/prism_cli.png )
+
+In the above example , time = 6 and purchase = 1 . Since last bidding was [BID] , value = 1700 ( bid value ) . utility = 1700/6 = 283.3.
+
+#### DEAP
 
 
+Distributed Evolutionary Algorithms in Python (DEAP) is a evolutionary computation framework for rapid prototyping and testing of ideas and seeks to make algorithms explicit and data structures transparent. It was this transparency and generalized framework that attracted us to use DEAP for development. DEAP has selection,mutation and crossover operators [3] already developed that helped faster development .DEAP has a learning curve which made us read the documentation and test some simulations without prism parser before we proceeded with integration.
+
+#### Optimizers
+
+OPTIMIZERS
+We declare the common functions for population generation, mate and mutate first.
+The population was generated as follows:
+```creator.create("Fitness", base.Fitness, weights=(4.0, 1.0, -1.0),crowding_dist=None) ```
+
+Here the weights for ( purchase, utility , time ) are (4.0 , 1.0 and -1.0 ) . Here, negative values show minimizing objective. Positive values show maximizing objective. A 4.0 shows that weightage of purchase is higher than the other objectives , so that we get more purchases in the final population.
+
+We define the mate and mutate functions for NSGA2 and SPEA2 for each decision for range ( BOUND_LOW, BOUND_UP ) as:
+```
+toolbox.register("mate", tools.cxSimulatedBinaryBounded, low=BOUND_LOW, up=BOUND_UP, eta=1.0)
+toolbox.register("mutate", tools.mutPolynomialBounded, low=BOUND_LOW, up=BOUND_UP, eta=1.0, indpb=1.0/NDIM)
+```
+##### NSGA2
+
+1. We first defined the select function :
+```toolbox.register("select", tools.selNSGA2)```
+2. Generate a population using DEAP
+```pop = toolbox.population(n=MU)```
+3. Evaluate individuals with invalid fitnesses and evaluate fitnesses again for them
+```invalid_ind = [ind for ind in pop if not ind.fitness.valid]
+    fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
+    for ind, fit in zip(invalid_ind, fitnesses):
+       ind.fitness.values = fit```
+4. Assign crowding distance to the population
+```pop = toolbox.select(pop, len(pop))```
+5. For every generation run
+	* Create new population “offspring” by cloning the population
+```offspring = tools.selTournamentDCD(pop, len(pop))
+offspring = [toolbox.clone(ind) for ind in offspring]```
+	* Using alternate pairs of the new population, with crossover probability mate the two selected individuals and then mutate them
+```for ind1, ind2 in zip(offspring[::2], offspring[1::2]):
+            if random.random() <= CXPB:
+                toolbox.mate(ind1, ind2)
+toolbox.mutate(ind1)
+toolbox.mutate(ind2)```
+	* Evaluate fitness for all invalid individuals again
+	* Select the best individuals from the old and new population
+```pop = toolbox.select(pop + offspring, MU)```
+	* Run steps A-D for the next generation
+
+**Params for NSGA2**
+CXPB : Crossover probability : 0.9
+MUT  : Mutation probability : 0.03
+NDIM :  30
+
+
+##### SPEA2
+We define the select function as:
+```toolbox.register("select", tools.selSPEA2)```
+The steps, code and params are the same as NSGA2
+
+
+**Params for SPEA2 **
+CXPB : Crossover probability : 0.9
+MUT  : Mutation probability : 0.03
+
+##### Genetic Algorithm
+
+The mate and mutate and select functions are defined:
+```toolbox.register("mate", tools.cxTwoPoint)
+toolbox.register("mutate", tools.mutUniformInt, low = BOUND_LOW, up = BOUND_UP, indpb=MUTPB)
+toolbox.register("select", tools.selTournament, tournsize=3)```
+
+
+GA follows the same steps as NSGA 2 except for the following differences:
+	*The crossover individuals are mutated based on a mutation probability
+```if random.random() < MUTPB:
+   toolbox.mutate(mutant)
+	*The next generation population is not composed of the best individuals from the old and new population but rather entirely of the new population
+pop[:] = offspring```
+
+
+**Params in GA**
+CXPB : Crossover probability : 1.0
+MUT  : Mutation probability : 0.01
