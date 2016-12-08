@@ -26,17 +26,17 @@ The buyer-seller model depends on many decisions such as buyer/seller initial pr
 
 ### Background
 #### Rubinstein’s Bargaining Model
-The bargaining model features alternating offers through an infinite time horizon where two individuals have before them several possible contractual agreements. The standard model has following elements-
+The bargaining model features alternating offers through an infinite time horizon where two individuals have several possible contractual agreements before them. The standard model has following elements-
 
 1. Two players - Buyer and Seller.
-2. Unlimited offers to reach consensus, until one player accepts an offer
-3. Alternating offers - first player makes an offer and if second player rejects, the game moves to the next period where second player makes an offer, and so forth.
+2. Unlimited offers to reach consensus until one player accepts an offer
+3. Alternating offers - first player makes an offer and if second player rejects, the game moves to the next period where second player makes an offer, and so on.
 4. Delays are costly since utility value decreases as time progresses.
 
 ### Prism Model
 The model used in this project is based on the Rubinstein’s Alternating Offers protocol negotiation framework. The model used was already implemented as a Discrete Time Markov Chain model in the PRISM language, a simple state based language to be run on prism model checker tool.
 
-1. In this both buyer and seller bargain over an item, proposing offers or counter offers until number of steps configured.
+1. In this, both buyer and seller bargain over an item, proposing offers or counter offers until number of steps configured.
 2. Disagreement is the worst outcome and players prefer any agreement at least as much as disagreement.
 3. Players seek to maximize utility. For two outcomes of the same value, the one with lesser time has higher utility.
 
