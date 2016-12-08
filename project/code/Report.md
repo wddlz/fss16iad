@@ -175,9 +175,13 @@ toolbox.mutate(ind2)```
 	* Run steps A-D for the next generation
 
 *Params for NSGA2*
+
 CXPB : Crossover probability : 0.9
+
 MUT  : Mutation probability : 0.03
+
 NDIM :  30
+
 
 
 ##### SPEA2
@@ -189,7 +193,9 @@ The steps, code and params are the same as NSGA2
 *Params for SPEA2*
 
 CXPB : Crossover probability : 0.9
+
 MUT  : Mutation probability : 0.03
+
 
 ##### Genetic Algorithm
 
@@ -208,5 +214,12 @@ pop[:] = offspring```
 
 
 *Params in GA*
+
 CXPB : Crossover probability : 1.0
+
 MUT  : Mutation probability : 0.01
+
+#### SCOOP
+
+SCOOP (Scalable COncurrent Operations in Python) is a distributed task module allowing concurrent parallel programming on various environments, from heterogeneous grids to supercomputers.DEAP works in perfect harmony with parallelisation mechanism such as multiprocessing and SCOOP. We tried with multiprocessing which helped us improve run time but faced issues due to due to limitation of processors on laptop hardware and VCL Virtual machines.
+SCOOP let us configure number of parallel workers by ```python -m scoop -n 100 run.py  # n = number of workers``` .
