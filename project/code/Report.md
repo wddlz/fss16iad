@@ -20,3 +20,16 @@ Bargaining between buyers and sellers is an activity that has been around since 
 7. **Hypervolume** : The volume inside the pareto frontiers is called the hypervolume.
 8. **DEAP** : Distributed Evolutionary Algorithms in Python (DEAP) is a novel evolutionary computation framework for rapid prototyping and testing of ideas.
 9. **SCOOP** : Scalable COncurrent Operations in Python (SCOOP) is a distributed task module allowing concurrent parallel programming on various environments, from heterogeneous grids to supercomputers. 
+
+### Introduction
+The buyer-seller model depends on many decisions such as buyer/seller initial price,reserved price, strategy, time deadline etc and utility value depends on the value at which the buyer and seller agreed for purchase as well as on the time when the agreement was made.The utility value would be higher for purchase value made earlier  The prism  model we used had 15 decisions and generated 3 objectives. The large number of decisions in this model was amajor challenge undertaken in this project as it becomes increasingly difficult to explore the large solution space. In addition to this , the model simulation took several hours to complete due to the simulation overhead caused by prism simulation.This led us to pursue system objective to improve the run time by  using parallelism, load balancing and early termination.
+
+### Background
+#### Rubinstein’s Bargaining Model
+The bargaining model features alternating offers through an infinite time horizon where two individuals have before them several possible contractual agreements. The standard model has following elements-
+
+1. Two players - Buyer and Seller.
+2. Unlimited offers to reach consensus, until one player accepts an offer
+3. Alternating offers - first player makes an offer and if second player rejects, the game moves to the next period where second player makes an offer, and so forth.
+4. Delays are costly since utility value decreases as time progresses.
+
