@@ -104,7 +104,8 @@ The following were the constraints for the decisions that we checked using the o
 
 In the paper[2] Automated Game Analysis via Probabilistic model Checking , the authors did a case study to show how a probabilistic model checking tool can be used for automated analysis in a uncertain environment and agent. The paper did an analysis of two scenarios  claiming  in linear strategies - slow is better than faster and in non-linear strategies - the shorter conceding time is better.
 Authors covered limited scenarios since the simulation was done manually using prism model checking tool.
-We on the other hand used genetic algorithms to cover more area.
+
+We on the other hand used genetic algorithms to cover more scenarios.
 
 ### 6. Implementation 
 #### 	1. Prism parser 
