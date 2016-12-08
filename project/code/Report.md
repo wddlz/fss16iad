@@ -6,11 +6,11 @@
 
 ##### Date : December 07 , 2016  
 
-### Abstract  
+### 1. Abstract  
 
 Bargaining between buyers and sellers is an activity that has been around since the dawn of civilization. Both parties ideally want low and high prices and try to agree on a price somewhere in between. The large number of decisions that affect the bargaining and the non-deterministic nature of this process’s model, make finding the best solutions difficult and model simulation a slow process. This project made use of prism model simulator to simulate the model and used three different genetic algorithms namely GA,NSGA2 and SPEA2  to find the best decision sets for the buyer-seller model. It also used parallelism and early termination to improve the overall run time of running optimizers on the model.
 
-### Keywords
+### 2. Keywords
 1. **Prism** : PRISM is a probabilistic model checker, a tool for formal modelling and analysis of systems that exhibit random or probabilistic behaviour.
 2. **GA** : Genetic Algorithm is a method for solving both constrained and unconstrained optimization problems based on a natural selection process that mimics biological evolution.
 3. **NSGA2** : Non-dominated sorting genetic algorithm for multi objective optimization that makes use of multiple frontiers and primary/secondary sorting.
@@ -21,11 +21,11 @@ Bargaining between buyers and sellers is an activity that has been around since 
 8. **DEAP** : Distributed Evolutionary Algorithms in Python (DEAP) is a novel evolutionary computation framework for rapid prototyping and testing of ideas.
 9. **SCOOP** : Scalable COncurrent Operations in Python (SCOOP) is a distributed task module allowing concurrent parallel programming on various environments, from heterogeneous grids to supercomputers. 
 
-### Introduction
+### 3. Introduction
 The buyer-seller model depends on many decisions such as buyer/seller initial price, reserved price, strategy, time deadline, etc. The utility value depends on the value at which the buyer and seller agreed for purchase as well as on the time when the agreement was made.The utility value would be higher for purchase value made earlier. The prism model we used had 15 decisions and generated 3 objectives. The large number of decisions in this model was a major challenge undertaken in this project as it becomes increasingly difficult to explore the large solution space. In addition to this, the model simulation took several hours to complete due to the simulation overhead caused by prism simulation. This led us to pursue a new objective to improve the run time by using parallelism, load balancing and early termination.
 
-### Background
-#### Rubinstein’s Bargaining Model
+### 4. Background
+#### 	1. Rubinstein’s Bargaining Model
 The bargaining model features alternating offers through an infinite time horizon where two individuals have several possible contractual agreements before them. The standard model has following elements-
 
 1. Two players - Buyer and Seller.
@@ -33,14 +33,14 @@ The bargaining model features alternating offers through an infinite time horizo
 3. Alternating offers - first player makes an offer and if second player rejects, the game moves to the next period where second player makes an offer, and so on.
 4. Delays are costly since utility value decreases as time progresses.
 
-#### Prism Model
+#### 	2. Prism Model
 The model used in this project is based on the Rubinstein’s Alternating Offers protocol negotiation framework. The model used was already implemented as a Discrete Time Markov Chain model in the PRISM language, a simple state based language to be run on prism model checker tool.
 
 1. In this, both buyer and seller bargain over an item, proposing offers or counter offers until number of steps configured.
 2. Disagreement is the worst outcome and players prefer any agreement at least as much as disagreement.
 3. Players seek to maximize utility. For two outcomes of the same value, the one with lesser time has higher utility.
 
-#### Model states
+#### 	3. Model states
 
 ![state](./screenshots/model_state.png )
 
@@ -58,10 +58,10 @@ The model can have the following states as seen in the figure above:
 The buyer makes a bid and if the seller agrees, purchase is completed. Otherwise, he waits for a counter bid (cbid). If counter bid is rejected , the buyer bids again.
 The seller waits for a bid and if accepted, the purchase is done. Otherwise he makes a counter bid and the process continues till either the seller or buyer agrees to a bid or cbid. 
 
-#### Strategy
+#### 	4. Strategy
 The buyer and seller follow two strategies - Conceder (if the player is willing to yield a lot in the early phase of negotiation) and Boulder (if a player is willing to concede considerably only when it's time deadline is approaching). The strategy can be linear or nonlinear.
 
-#### Decisions
+#### 	5. Decisions
 | No 	| Decision                          	| Description                                                                                                 	| Range we used      	|
 |----	|-----------------------------------	|-------------------------------------------------------------------------------------------------------------	|--------------------	|
 | 1  	| Buyer Initial price B_IP          	| Ideal high and low price at which,buyer begin                                                               	| Buyer(1,100)       	|
@@ -80,7 +80,7 @@ The buyer and seller follow two strategies - Conceder (if the player is willing 
 | 14 	| Seller’s switching factor Ks      	| Seller stops conceding when it’s next bid is lesser thanseller switching factor * seller conceder increment 	| (8,9)              	|
 | 15 	| Offset                            	| Allows for considering a shifted accepting interval while minimizing model complexity                       	| (10000, 15000)     	|
 
-#### Decision constraints
+#### 	6. Decision constraints
 The following were the constraints for the decisions that we checked using the ok() function in our code:
 
 1. Buyer Initial Price < Buyer Reserved Price
@@ -89,7 +89,7 @@ The following were the constraints for the decisions that we checked using the o
 4. Buyer’s start conceding time deadline < Buyer time deadline
 5. Seller’s stop conceding time deadline < Seller time deadline
 
-#### Objectives 
+#### 	7. Objectives 
 
 | No 	| Objective 	| Description                                                                                                                                                                    	| Min/Max  	|
 |----	|-----------	|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	|----------	|
@@ -97,13 +97,13 @@ The following were the constraints for the decisions that we checked using the o
 | 2  	| Time      	| Time taken to come to a purchase agreement                                                                                                                                     	| Minimize 	|
 | 3  	| Purchase  	| If purchase was successful Purchase =1 else Purchase =0.                                                                                                                       	| Maximize 	|
 
-### Related Work
+### 5. Related Work
 1. what paper did?
 2. What claims they made?
 3. What scope they had?
 
-### Implementation 
-#### Prism parser 
+### 6. Implementation 
+#### 	1. Prism parser 
 Prism model checker has a CLI program which takes the model file as an input along with max steps ( simpath) and the 15 decisions we discussed in the previous sections.  The CLI simulates each step and displays if a purchase was made. We use the following algorithm to parse the simulation and extract the objectives.
 ```
 if ( last step contains “[PURCHASE]” ) :
@@ -127,12 +127,12 @@ Following figure shows the example simulation.
 
 In the above example , time = 6 and purchase = 1 . Since last bidding was [BID] , value = 1700 ( bid value ) . utility = 1700/6 = 283.3.
 
-#### DEAP
+#### 	2. DEAP
 
 
 Distributed Evolutionary Algorithms in Python (DEAP) is a evolutionary computation framework for rapid prototyping and testing of ideas and seeks to make algorithms explicit and data structures transparent. It was this transparency and generalized framework that attracted us to use DEAP for development. DEAP has selection,mutation and crossover operators [3] already developed that helped faster development .DEAP has a learning curve which made us read the documentation and test some simulations without prism parser before we proceeded with integration.
 
-#### Optimizers
+#### 	3. Optimizers
 
 OPTIMIZERS
 We declare the common functions for population generation, mate and mutate first.
