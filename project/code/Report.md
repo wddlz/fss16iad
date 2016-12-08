@@ -243,11 +243,11 @@ We have seen GA had around 70% of cache hit for 100 generations. That would redu
 
 #####	2. SCOOP
 
-SCOOP helped us configure number of workers, so when workers (n) = 100 , 100 evaluations are done at a time. But the prism CLI couldn’t handle 100 requests simultaneously and failed for more than 4-5 workers. We could have added a queue to handle those requests but that would not help improve the runtime. So we went ahead with having multiple machines each running prism CLI.  
+SCOOP[5] helped us configure number of workers, so when workers (n) = 100 , 100 evaluations are done at a time. But the prism CLI couldn’t handle 100 requests simultaneously and failed for more than 4-5 workers. We could have added a queue to handle those requests but that would not help improve the runtime. So we went ahead with having multiple machines each running prism CLI.  
 
 #####	3.Nginx and uwsgi
 
-To integrate those multiple machines to handle the requests from 100 SCOOP workers we chose HTTP protocol and developed a flask application that used uwsgi to create sockets. The requests were load balanced on these sockets using an NGINX web proxy server. The architecture is as follows - 
+To integrate those multiple machines to handle the requests from 100 SCOOP workers we chose HTTP protocol and developed a flask application that used uwsgi to create sockets. The requests were load balanced on these sockets using an NGINX web proxy server[4]. The architecture is as follows - 
 
 ![architecture](./screenshots/architecture.png )
 
@@ -319,3 +319,6 @@ We created prism parser for our model and sent the objectives over, but we can u
 
 [3] - DEAP operators . http://deap.readthedocs.io/en/master/api/tools.html#operators
 
+[4] NGINX as Load Balancer - http://nginx.org/en/docs/http/load_balancing.html
+
+[5] SCOOP - https://github.com/soravux/scoop/
