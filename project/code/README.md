@@ -6,7 +6,7 @@ Bargaining between buyers and sellers is an activity that has been around since 
 
 ## Report
 
-Report [link](http://github.com/wddlz/fss16iad/tree/master/project/code/Report.md)
+**Report** [link](http://github.com/wddlz/fss16iad/tree/master/project/code/Report.md)
 
 ## Files Description
 *Requires* - redis,deap,matplotlib,numpy,Flask.
