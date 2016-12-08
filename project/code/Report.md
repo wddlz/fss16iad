@@ -174,7 +174,7 @@ toolbox.mutate(ind2)```
 ```pop = toolbox.select(pop + offspring, MU)```
 	* Run steps A-D for the next generation
 
-**Params for NSGA2**
+*Params for NSGA2*
 CXPB : Crossover probability : 0.9
 MUT  : Mutation probability : 0.03
 NDIM :  30
@@ -186,7 +186,8 @@ We define the select function as:
 The steps, code and params are the same as NSGA2
 
 
-**Params for SPEA2 **
+*Params for SPEA2*
+
 CXPB : Crossover probability : 0.9
 MUT  : Mutation probability : 0.03
 
@@ -199,13 +200,13 @@ toolbox.register("select", tools.selTournament, tournsize=3)```
 
 
 GA follows the same steps as NSGA 2 except for the following differences:
-	*The crossover individuals are mutated based on a mutation probability
+	* The crossover individuals are mutated based on a mutation probability
 ```if random.random() < MUTPB:
    toolbox.mutate(mutant)
-	*The next generation population is not composed of the best individuals from the old and new population but rather entirely of the new population
+	* The next generation population is not composed of the best individuals from the old and new population but rather entirely of the new population
 pop[:] = offspring```
 
 
-**Params in GA**
+*Params in GA*
 CXPB : Crossover probability : 1.0
 MUT  : Mutation probability : 0.01
