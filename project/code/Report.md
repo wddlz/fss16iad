@@ -234,11 +234,11 @@ Initially , we used python dictionaries for caching , and due to synchronization
 
 ![hitratio](./screenshots/hit_ratio.png )
 
-We have seen GA had around 70% of cache hit for 100 generations. That would reduce number of evaluations to (1 - 0.7 ) *100 *100 * 2.5 ~ 2 hours. For NSGA2 and SPEA2 we have seen around 30% hit ratio due to the configured mutation and crossover values. But caching has improved overall runtimes for simulation.
+We have seen GA had around 70% of cache hit for 100 generations. That would reduce number of evaluations to (1 - 0.7 ) *100 *100 * 2.5 ~ 2 hours. For NSGA2 and SPEA2 we have seen around 30% hit ratio due to the configured mutation and crossover values. But caching has improved overall runtimes for simulation.  
 
 2. SCOOP
 
-SCOOP helped us configure number of workers, so when workers (n) = 100 , 100 evaluations are done at a time. But the prism CLI couldn’t handle 100 requests simultaneously and failed for more than 4-5 workers. We could have added a queue to handle those requests but that would not help improve the runtime. So we went ahead with having multiple machines each running prism CLI.
+SCOOP helped us configure number of workers, so when workers (n) = 100 , 100 evaluations are done at a time. But the prism CLI couldn’t handle 100 requests simultaneously and failed for more than 4-5 workers. We could have added a queue to handle those requests but that would not help improve the runtime. So we went ahead with having multiple machines each running prism CLI.  
 
 3. Nginx and uwsgi 
 
@@ -246,8 +246,8 @@ To integrate those multiple machines to handle the requests from 100 SCOOP worke
 
 ![architecture](./screenshots/architecture.png )
 
-SCOOP workers run the run.py and they send the evaluation requests over HTTP to Nginx proxy which distributes the works across 10 VCL machines running Prism Parser. The response is sent back. We have seen 100*100 evaluations taking less than 15 minutes which initially took 7 hours.
+SCOOP workers run the run.py and they send the evaluation requests over HTTP to Nginx proxy which distributes the works across 10 VCL machines running Prism Parser. The response is sent back. We have seen 100*100 evaluations taking less than 15 minutes which initially took 7 hours.  
 
 4. Early termination
 
-We calculated standard deviation , min , max and average values for each generation. For two subsequent generations, if all of these values are same , we do an early termination. For NSGA2 and SPEA2 we have seen early termination of 25- 45 generations and for GA around 35- 60 Generations. 
+We calculated standard deviation , min , max and average values for each generation. For two subsequent generations, if all of these values are same , we do an early termination. For NSGA2 and SPEA2 we have seen early termination of 25- 45 generations and for GA around 35- 60 Generations.  
