@@ -251,3 +251,56 @@ SCOOP workers run the run.py and they send the evaluation requests over HTTP to 
 4. Early termination
 
 We calculated standard deviation , min , max and average values for each generation. For two subsequent generations, if all of these values are same , we do an early termination. For NSGA2 and SPEA2 we have seen early termination of 25- 45 generations and for GA around 35- 60 Generations.  
+
+### Results
+
+1. Run times
+With the above optimizations we ran the 3 algorithms and following were the run times observed.
+
+NSGA2 - 421.781 seconds ~ 7.03 mins - Early termination at Generation 26.
+SPEA2 - 409.983 seconds ~ 6.83 mins  - Early termination at Generation 25.
+GA- 3341.352 seconds ~ 55.6 mins  - Early termination at Generation 37.
+
+NSGA2 and SPEA2 showed significant improvement for evaluation. SCOOP provides map reduce for selection and SPEA2 and NSGA2 better utilizes this. The GA code we wrote used Tournament selection for two children, and mutation and cross over over the children to generate new children in the population. This did not use the SCOOP feature of map reduce.
+
+2. Pareto Frontier
+
+When we plot the pareto for time vs utility for all purchase = 1 , we see NSGA2 and SPEA2 showed points reaching the utopia point ( time = 0 and utility = infinity ).
+GA needed fine tuning to get better points, but we faced issues with over tuning where after several generations , a single point would dominate the other points.
+
+
+3. Hypervolume, Spread and IGD
+
+We used Hypervolume, spread and Inter Generational distance to compare the optimizers we used. Hypervolume is volume inside the pareto frontiers , more the better.  We calculated reference set by aggregating the pareto frontier from the 3 algorithms and taking the best 100 population. Spread and IGD uses this reference set to compare. Spread calculates how distant each point of a population is from its neighbours. The more the spread is, the better spread out the population. IGD is distance between reference set and obtained pareto frontier. Lesser the IGD, the better it is, since more population is in the best set.
+
+
+
+In the above graph, NSGA2 had better spread and SPEA2 had better IGD. Infact, SPEA2 had most of the best solutions in the reference set. NSGA2 did give better looking pareto front but did not have the best points selected. This could be due to DTMC behavior of prism calls where same decision set would give varied objectives every run. We cleared the cache after every algorithm so that it does not affect the speeds of the second and third algorithm.
+GA had better hypervolume. This may be due to the extraneous points which did not show better curve. As far as spread goes, NSGA2 and SPEA2 had almost similar values , but NSGA2 had better value.
+
+
+4. Stats.py
+
+Stats.py was used from Dr. Menzies’s repository to compare the algorithms ,based on each objective. For purchase , all algorithms had median 1 which showed purchases were made and all were in the same rank. For time ,  NSGA2 had a better median , but all algorithms were in the same rank. For utility , SPEA2 showed higher values and GA had similar values and were ranked in same category.
+
+
+
+**Run time issues**
+Some algorithms may not show significant improvement due to SCOOP if they do not use map feature for evaluation. We have seen this behaviour for GA we implemented.
+
+
+### Conclusion 
+
+We used DEAP framework which can help implement new algorithms quickly. SCOOP compatibility with DEAP and other optimization strategies helped improve runtimes by 99x for NSGA2, 99x for SPEA2 and 86x for GA. NSGA2 and SPEA2 gave good points. Most of the best points from all three algorithms were from SPEA2. GA needs better tuning. Also, since we could scale the prism calculations, evaluations were done faster which helped us cover more area . Also , we performed specific scenarios by varying the range for each decision which helped us verify and make claims for the model. The optimizers chose final populations that had the seller choose boulware strategy quicker in the best interest of the seller which is based on the original authors’ claim.The optimizers chose boulware increments that were higher for the seller and time is an important factor, so even though it wanted to be boulware it had to still get an agreement.  The larger the boulware increment, the faster they approach an agreement between buyer and seller. 
+
+### Future Work
+
+We created prism parser for our model and sent the objectives over, but we can use cgi-bin for sending the raw results for each model simulation. This along with a load balancer would help run the simulation in parallel. Along with this ,we have configured bounds for each decisions. Varying the bounds in a specific interval can help us generate pareto frontiers for specific scenarios. In terms of objectives , we have seen only 3 objectives, but adding more objectives like utility value for seller or buyer separately and finding solutions better for buyer or seller  perspective can be helpful. We can also associate a property like is_item_perishable to make sure that items sold after their perish date will have 0 utility. As of now, we have used standard NSGA2 and can replace the BDOM function with CDOM to get better elite solutions. We tried going ahead with Differential Evolution but couldn’t tune it better to get good results. Using Particle swarm optimization to tune DE might help us get better and faster pareto frontier.
+
+
+### Reference 
+
+[1] Prism Model Alternating Offers Protocol - http://www.prismmodelchecker.org/casestudies/negotiation.php
+[2] “ P. Ballarini, M. Fisher, M.J. Wooldridge” ,  Automated Game Analysis via Probabilistic Model Checking.
+[3] - DEAP operators . http://deap.readthedocs.io/en/master/api/tools.html#operators
+
