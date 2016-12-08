@@ -33,3 +33,25 @@ The bargaining model features alternating offers through an infinite time horizo
 3. Alternating offers - first player makes an offer and if second player rejects, the game moves to the next period where second player makes an offer, and so forth.
 4. Delays are costly since utility value decreases as time progresses.
 
+### Prism Model
+The model used in this project is based on the Rubinstein’s Alternating Offers protocol negotiation framework. The model used was already implemented as a Discrete Time Markov Chain model in the PRISM language, a simple state based language to be run on prism model checker tool.
+
+1. In this both buyer and seller bargain over an item, proposing offers or counter offers until number of steps configured.
+2. Disagreement is the worst outcome and players prefer any agreement at least as much as disagreement.
+3. Players seek to maximize utility. For two outcomes of the same value, the one with lesser time has higher utility.
+
+### Model states
+
+The model can have the following states as seen in the figure above:
+
+1. Wait Bid : Seller awaiting a bid
+2. Bid : Buyer proposing a bid
+3. Purchase : Either seller or buyer agreeing to the proposed value
+4. Bid Result : Seller’s response on buyer’s bid
+5. Wait CBid : Buyer awaiting seller’s counter offer after bid rejection
+6. CBid : Counter bid thrown by seller after rejection of buyer’s bid
+7. CBid Result : Buyer’s response on seller’s counter bid
+
+
+The buyer makes a bid and if the seller agrees purchase is completed else waits for counter bid (cbid). If counter bid is rejected , the buyer bids again.
+The seller waits for a bid and if accepted purchase is done, else makes a counter bid and the process continues till either the seller or buyer agrees to a bid or cbid. 
