@@ -17,7 +17,7 @@ Bargaining between buyers and sellers is an activity that has been around since 
 4. **SPEA2** : Strength pareto evolutionary algorithm for multi objective optimization that uses dominance count and an archive,which is a set of good solutions.
 5. **Spread** : How distant each point of a population is from its neighbours
 6. **IGD** : Distance between the ideal and obtained pareto front.
-7. **Hypervolume** : The volume inside the pareto frontiers is called the hypervolume.
+7. **Hypervolume** : The volume inside the pareto frontiers.
 8. **DEAP** : Distributed Evolutionary Algorithms in Python (DEAP) is a novel evolutionary computation framework for rapid prototyping and testing of ideas.
 9. **SCOOP** : Scalable COncurrent Operations in Python (SCOOP) is a distributed task module allowing concurrent parallel programming on various environments, from heterogeneous grids to supercomputers. 
 
