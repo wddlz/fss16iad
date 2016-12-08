@@ -223,3 +223,31 @@ MUT  : Mutation probability : 0.01
 
 SCOOP (Scalable COncurrent Operations in Python) is a distributed task module allowing concurrent parallel programming on various environments, from heterogeneous grids to supercomputers.DEAP works in perfect harmony with parallelisation mechanism such as multiprocessing and SCOOP. We tried with multiprocessing which helped us improve run time but faced issues due to due to limitation of processors on laptop hardware and VCL Virtual machines.
 SCOOP let us configure number of parallel workers by ```python -m scoop -n 100 run.py  # n = number of workers``` .
+
+#### Optimizations to run time
+
+Without optimization , the prism parse call takes 2.5 seconds on an average. So for 100 Generations and 100 Populations we will have 100*100 evaluations taking 100*100*2.5 ~ 7 hours to run the simulation. NSGA2 without prism parse call takes on average 5 minutes. So we went with optimization of the run time for prism simulation.
+
+1. Caching
+
+Initially , we used python dictionaries for caching , and due to synchronization issues on multi processing and scoop we went with a single cache using Redis. Redis server has cache expiry timer in case we want to invalidate cache entries and we have implemented this in our code.
+
+![hitratio](./screenshots/hit_ratio.png )
+
+We have seen GA had around 70% of cache hit for 100 generations. That would reduce number of evaluations to (1 - 0.7 ) *100 *100 * 2.5 ~ 2 hours. For NSGA2 and SPEA2 we have seen around 30% hit ratio due to the configured mutation and crossover values. But caching has improved overall runtimes for simulation.
+
+2. SCOOP
+
+SCOOP helped us configure number of workers, so when workers (n) = 100 , 100 evaluations are done at a time. But the prism CLI couldn’t handle 100 requests simultaneously and failed for more than 4-5 workers. We could have added a queue to handle those requests but that would not help improve the runtime. So we went ahead with having multiple machines each running prism CLI.
+
+3. Nginx and uwsgi 
+
+To integrate those multiple machines to handle the requests from 100 SCOOP workers we chose HTTP protocol and developed a flask application that used uwsgi to create sockets. The requests were load balanced on these sockets using an NGINX web proxy server. The architecture is as follows - 
+
+![architecture](./screenshots/architecture.png )
+
+SCOOP workers run the run.py and they send the evaluation requests over HTTP to Nginx proxy which distributes the works across 10 VCL machines running Prism Parser. The response is sent back. We have seen 100*100 evaluations taking less than 15 minutes which initially took 7 hours.
+
+4. Early termination
+
+We calculated standard deviation , min , max and average values for each generation. For two subsequent generations, if all of these values are same , we do an early termination. For NSGA2 and SPEA2 we have seen early termination of 25- 45 generations and for GA around 35- 60 Generations. 
