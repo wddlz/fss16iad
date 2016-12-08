@@ -200,10 +200,10 @@ toolbox.register("select", tools.selTournament, tournsize=3)```
 
 
 GA follows the same steps as NSGA 2 except for the following differences:
-	* The crossover individuals are mutated based on a mutation probability
+* The crossover individuals are mutated based on a mutation probability
 ```if random.random() < MUTPB:
    toolbox.mutate(mutant)
-	* The next generation population is not composed of the best individuals from the old and new population but rather entirely of the new population
+* The next generation population is not composed of the best individuals from the old and new population but rather entirely of the new population
 pop[:] = offspring```
 
 
