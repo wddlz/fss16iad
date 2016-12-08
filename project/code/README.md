@@ -5,26 +5,45 @@
 ## Files Description
 *Requires* - redis,deap,matplotlib,numpy,Flask.
 
-```nginx.conf``` - Nginx configuration with IPs of the servers running flask application using sockets on wsgi mentioned as ```server 152.46.19.201:5002```.
-```app.ini ``` -uwsgi ini file to mention socket address and number of processes for the flask application .
-```app.py``` - Flask application to handle ```/prism``` route over HTTP.
-```parse.py``` - Run the prism cli and parse the results to get objectives from the decisions. Prism cli location is configured here.
+```nginx.conf``` - Nginx configuration with IPs of the servers running flask application using sockets on wsgi mentioned as ```server 152.46.19.201:5002```
+
+```app.ini ``` -uwsgi ini file to mention socket address and number of processes for the flask application
+
+```app.py``` - Flask application to handle ```/prism``` route over HTTP
+
+```parse.py``` - Run the prism cli and parse the results to get objectives from the decisions. Prism cli location is configured here
+
 ```prism.py``` - To get objectives from the flask application over HTTP.Nginx server IP is configured in this file.
+
 ```run.py ``` - All algorithms are written here. Future algos can be written as ```def main_algo(algorithm="AlgorithmName",seed=None,NGEN=100,MU=100)``` and called in ```__main__``` using ```algo = [main_nsga2 , main_spea2 ,main_ga , main_algo]```
+
 ```runforever.sh``` - Runs multiple run by calling run.py.
+
 ```hit_ratio.txt``` - Saved when ```plotHitRatio()``` is called to calculate hit counters in single thread environment.
+
 ```hit_ratio.py``` - Runs on hit_ratio.txt to plot the hit ratio graph.
+
 ```negotiation.pm``` - The modified prism file for negotiation which requires 15 decisions to be given in the format ```["B_RP", "S_RP", "B_IP", "S_IP", "Tb", "TbB", "Ts", "TsB", "bCinc", "bBinc", "sCdec", "sBdec", "Kb", "Ks","Offset"]```
 
+
 ```plotGraph.py```  - Plot graphs based on the paretos generated from run.py
+
 ```savestat.py``` - Helper class to save stat to files.
+
 ```spread_igd.py``` - Professor provided spread and igd calculator.
+
 ```hypervolume.py``` - Professor provided hypervolume calculator -modified for our purpose.
+
 ```printStat.sh``` -calls stat.py under stats which uses uuid for each run to pretty print stats.
+
 ```variance.py``` - Calculate variance for various prism runs
+
 ```/sample``` - Contains sample output from prism CLI
+
 ```/screenshots``` - Contains screenshots required for the report.
+
 ```/stats``` - Contains sample stats of someruns and ```stat.py``` for performance measure.
+
 
 
 ## Instructions
