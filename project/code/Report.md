@@ -33,14 +33,14 @@ The bargaining model features alternating offers through an infinite time horizo
 3. Alternating offers - first player makes an offer and if second player rejects, the game moves to the next period where second player makes an offer, and so on.
 4. Delays are costly since utility value decreases as time progresses.
 
-### Prism Model
+#### Prism Model
 The model used in this project is based on the Rubinstein’s Alternating Offers protocol negotiation framework. The model used was already implemented as a Discrete Time Markov Chain model in the PRISM language, a simple state based language to be run on prism model checker tool.
 
 1. In this, both buyer and seller bargain over an item, proposing offers or counter offers until number of steps configured.
 2. Disagreement is the worst outcome and players prefer any agreement at least as much as disagreement.
 3. Players seek to maximize utility. For two outcomes of the same value, the one with lesser time has higher utility.
 
-### Model states
+#### Model states
 
 ![state](./screenshots/model_state.png )
 
@@ -58,10 +58,10 @@ The model can have the following states as seen in the figure above:
 The buyer makes a bid and if the seller agrees, purchase is completed. Otherwise, he waits for a counter bid (cbid). If counter bid is rejected , the buyer bids again.
 The seller waits for a bid and if accepted, the purchase is done. Otherwise he makes a counter bid and the process continues till either the seller or buyer agrees to a bid or cbid. 
 
-### Strategy
+#### Strategy
 The buyer and seller follow two strategies - Conceder (if the player is willing to yield a lot in the early phase of negotiation) and Boulder (if a player is willing to concede considerably only when it's time deadline is approaching). The strategy can be linear or nonlinear.
 
-### Decisions
+#### Decisions
 | No 	| Decision                          	| Description                                                                                                 	| Range we used      	|
 |----	|-----------------------------------	|-------------------------------------------------------------------------------------------------------------	|--------------------	|
 | 1  	| Buyer Initial price B_IP          	| Ideal high and low price at which,buyer begin                                                               	| Buyer(1,100)       	|
@@ -79,3 +79,47 @@ The buyer and seller follow two strategies - Conceder (if the player is willing 
 | 13 	| Buyer’s switching factor Kb       	| Buyer stops conceding when it’s next bid is lesser thanBuyer switching factor * Buyer conceder increment    	| (1,2)              	|
 | 14 	| Seller’s switching factor Ks      	| Seller stops conceding when it’s next bid is lesser thanseller switching factor * seller conceder increment 	| (8,9)              	|
 | 15 	| Offset                            	| Allows for considering a shifted accepting interval while minimizing model complexity                       	| (10000, 15000)     	|
+
+#### Decision constraints
+The following were the constraints for the decisions that we checked using the ok() function in our code:
+
+1. Buyer Initial Price < Buyer Reserved Price
+2. Seller Reserved Price < Seller Initial Price
+3. Buyer/Seller Time deadline > 0
+4. Buyer’s start conceding time deadline < Buyer time deadline
+5. Seller’s stop conceding time deadline < Seller time deadline
+
+#### Objectives 
+
+| No 	| Objective 	| Description                                                                                                                                                                    	| Min/Max  	|
+|----	|-----------	|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	|----------	|
+| 1  	| Utility   	| The purchase value agreed upon, dependent on time. Among two purchase outcomes having the same value, the one with lesser time has higher utilityUtility = Purchase value/time 	| Maximize 	|
+| 2  	| Time      	| Time taken to come to a purchase agreement                                                                                                                                     	| Minimize 	|
+| 3  	| Purchase  	| If purchase was successful Purchase =1 else Purchase =0.                                                                                                                       	| Maximize 	|
+
+### Related Work
+1. what paper did?
+2. What claims they made?
+3. What scope they had?
+
+### Implementation 
+#### Prism parser 
+Prism model checker has a CLI program which takes the model file as an input along with max steps ( simpath) and the 15 decisions we discussed in the previous sections.  The CLI simulates each step and displays if a purchase was made. We use the following algorithm to parse the simulation and extract the objectives.
+```
+if ( last step contains “[PURCHASE]” ) :
+	“””Purchase was successful “””
+	purchase = 1  # 1 is successful purchase
+	time = step
+	if ( previous == “[BID]” ) : 
+		value = BID
+	else ( previous == “[CBID]” ) :
+		value = CBID
+	utility = value / time .
+else : 
+	“”” Purchase was unsuccessful”””
+	purchase = 0 # 0 is unsuccessful purchase
+	time = MAXINT
+utility = -1 
+```
+
+
