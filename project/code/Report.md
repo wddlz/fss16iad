@@ -26,7 +26,7 @@ The buyer-seller model depends on many decisions such as buyer/seller initial pr
 
 ### 4. Background
 #### 	1. Rubinstein’s Bargaining Model
-The bargaining model features alternating offers through an infinite time horizon where two individuals have several possible contractual agreements before them. The standard model has following elements-
+The bargaining model[1] features alternating offers through an infinite time horizon where two individuals have several possible contractual agreements before them. The standard model has following elements-
 
 1. Two players - Buyer and Seller.
 2. Unlimited offers to reach consensus until one player accepts an offer
@@ -101,9 +101,10 @@ The following were the constraints for the decisions that we checked using the o
 | 3  	| Purchase  	| If purchase was successful Purchase =1 else Purchase =0.                                                                                                                       	| Maximize 	|
 
 ### 5. Related Work
-1. what paper did?
-2. What claims they made?
-3. What scope they had?
+
+In the paper[2] Automated Game Analysis via Probabilistic model Checking , the authors did a case study to show how a probabilistic model checking tool can be used for automated analysis in a uncertain environment and agent. The paper did an analysis of two scenarios  claiming  in linear strategies - slow is better than faster and in non-linear strategies - the shorter conceding time is better.
+Authors covered limited scenarios since the simulation was done manually using prism model checking tool.
+We on the other hand used genetic algorithms to cover more area.
 
 ### 6. Implementation 
 #### 	1. Prism parser 
