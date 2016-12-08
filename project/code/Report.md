@@ -265,6 +265,8 @@ NSGA2 and SPEA2 showed significant improvement for evaluation. SCOOP provides ma
 
 2. Pareto Frontier
 
+![pareto](./screenshots/pareto.PNG )
+
 When we plot the pareto for time vs utility for all purchase = 1 , we see NSGA2 and SPEA2 showed points reaching the utopia point ( time = 0 and utility = infinity ).
 GA needed fine tuning to get better points, but we faced issues with over tuning where after several generations , a single point would dominate the other points.
 
@@ -274,6 +276,7 @@ GA needed fine tuning to get better points, but we faced issues with over tuning
 We used Hypervolume, spread and Inter Generational distance to compare the optimizers we used. Hypervolume is volume inside the pareto frontiers , more the better.  We calculated reference set by aggregating the pareto frontier from the 3 algorithms and taking the best 100 population. Spread and IGD uses this reference set to compare. Spread calculates how distant each point of a population is from its neighbours. The more the spread is, the better spread out the population. IGD is distance between reference set and obtained pareto frontier. Lesser the IGD, the better it is, since more population is in the best set.
 
 
+![hypervolume](./screenshots/performance.png )
 
 In the above graph, NSGA2 had better spread and SPEA2 had better IGD. Infact, SPEA2 had most of the best solutions in the reference set. NSGA2 did give better looking pareto front but did not have the best points selected. This could be due to DTMC behavior of prism calls where same decision set would give varied objectives every run. We cleared the cache after every algorithm so that it does not affect the speeds of the second and third algorithm.
 GA had better hypervolume. This may be due to the extraneous points which did not show better curve. As far as spread goes, NSGA2 and SPEA2 had almost similar values , but NSGA2 had better value.
@@ -284,6 +287,7 @@ GA had better hypervolume. This may be due to the extraneous points which did no
 Stats.py was used from Dr. Menzies’s repository to compare the algorithms ,based on each objective. For purchase , all algorithms had median 1 which showed purchases were made and all were in the same rank. For time ,  NSGA2 had a better median , but all algorithms were in the same rank. For utility , SPEA2 showed higher values and GA had similar values and were ranked in same category.
 
 
+![stats](./screenshots/stats.png )
 
 **Run time issues**
 Some algorithms may not show significant improvement due to SCOOP if they do not use map feature for evaluation. We have seen this behaviour for GA we implemented.
@@ -301,6 +305,8 @@ We created prism parser for our model and sent the objectives over, but we can u
 ### Reference 
 
 [1] Prism Model Alternating Offers Protocol - http://www.prismmodelchecker.org/casestudies/negotiation.php
+
 [2] “ P. Ballarini, M. Fisher, M.J. Wooldridge” ,  Automated Game Analysis via Probabilistic Model Checking.
+
 [3] - DEAP operators . http://deap.readthedocs.io/en/master/api/tools.html#operators
 
