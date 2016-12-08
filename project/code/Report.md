@@ -258,9 +258,12 @@ We calculated standard deviation , min , max and average values for each generat
 
 With the above optimizations we ran the 3 algorithms and following were the run times observed.
 
-NSGA2 - 421.781 seconds ~ 7.03 mins - Early termination at Generation 26.
-SPEA2 - 409.983 seconds ~ 6.83 mins  - Early termination at Generation 25.
-GA- 3341.352 seconds ~ 55.6 mins  - Early termination at Generation 37.
+| Optimizer 	| Run Time (secs) 	| Run Time (mins) 	| Early Termination 	|
+|-----------	|-----------------	|-----------------	|-------------------	|
+| NSGA2     	| 421.781         	| 7.03            	| Generation 26     	|
+| SPEA2     	| 409.983         	| 6.83            	| Generation 25     	|
+| GA        	| 3341.352        	| 55.6            	| Generation 37     	|
+
 
 NSGA2 and SPEA2 showed significant improvement for evaluation. SCOOP provides map reduce for selection and SPEA2 and NSGA2 better utilizes this. The GA code we wrote used Tournament selection for two children, and mutation and cross over over the children to generate new children in the population. This did not use the SCOOP feature of map reduce.
 
