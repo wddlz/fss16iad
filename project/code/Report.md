@@ -60,3 +60,22 @@ The seller waits for a bid and if accepted, the purchase is done. Otherwise he m
 
 ### Strategy
 The buyer and seller follow two strategies - Conceder (if the player is willing to yield a lot in the early phase of negotiation) and Boulder (if a player is willing to concede considerably only when it's time deadline is approaching). The strategy can be linear or nonlinear.
+
+### Decisions
+| No 	| Decision                          	| Description                                                                                                 	| Range we used      	|
+|----	|-----------------------------------	|-------------------------------------------------------------------------------------------------------------	|--------------------	|
+| 1  	| Buyer Initial price B_IP          	| Ideal high and low price at which,buyer begin                                                               	| Buyer(1,100)       	|
+| 2  	| Seller Initial price S_IP         	| Ideal high and low price at which seller begin                                                              	| Seller (1000,2000) 	|
+| 3  	| Buyer reserved PriceB_RP          	| Threshold where a player rejects offer 100% of the time                                                     	| Buyer(1000,2000)   	|
+| 4  	| Seller reserved PriceS_RP         	| Threshold where a player rejects offer 100% of the time                                                     	| Seller(1,100)      	|
+| 5  	| Buyer Time-deadlineTb             	| Time that player will quit negotiation if no agreement                                                      	| Buyer(50,100)      	|
+| 6  	| Seller Time-deadlineTs            	| Time that player will quit negotiation if no agreement                                                      	| Seller(50,100)     	|
+| 7  	| Boulware Strategy Switch Time TbB 	| When a player begins to start conceding from a boulware strategy                                            	| (20,40)            	|
+| 8  	| Conceder Strategy Switch Time TsB 	| When a player stops conceding based on the offered value based on reserved price.                           	| (48, 49)           	|
+| 9  	| Buyer conceder incrementbCinc     	| Increment in buyer’s bid for Conceder strategy                                                              	| (100,200)          	|
+| 10 	| Buyer Boulware incrementbBinc     	| Increment in buyer’s bid for Boulware strategy                                                              	| (1,3)              	|
+| 11 	| Seller conceder decrementsCdec    	| Decrement in seller’s bid for conceder strategy                                                             	| (100,200)          	|
+| 12 	| Seller Boulware decrementsBdec    	| Decrement in seller’s bid for Boulware strategy                                                             	| (1,3)              	|
+| 13 	| Buyer’s switching factor Kb       	| Buyer stops conceding when it’s next bid is lesser thanBuyer switching factor * Buyer conceder increment    	| (1,2)              	|
+| 14 	| Seller’s switching factor Ks      	| Seller stops conceding when it’s next bid is lesser thanseller switching factor * seller conceder increment 	| (8,9)              	|
+| 15 	| Offset                            	| Allows for considering a shifted accepting interval while minimizing model complexity                       	| (10000, 15000)     	|
