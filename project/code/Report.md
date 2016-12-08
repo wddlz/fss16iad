@@ -228,7 +228,7 @@ SCOOP let us configure number of parallel workers by ```python -m scoop -n 100 r
 
 Without optimization , the prism parse call takes 2.5 seconds on an average. So for 100 Generations and 100 Populations we will have 100*100 evaluations taking 100*100*2.5 ~ 7 hours to run the simulation. NSGA2 without prism parse call takes on average 5 minutes. So we went with optimization of the run time for prism simulation.
 
-1. Caching
+* **Caching**
 
 Initially , we used python dictionaries for caching , and due to synchronization issues on multi processing and scoop we went with a single cache using Redis. Redis server has cache expiry timer in case we want to invalidate cache entries and we have implemented this in our code.
 
@@ -236,11 +236,11 @@ Initially , we used python dictionaries for caching , and due to synchronization
 
 We have seen GA had around 70% of cache hit for 100 generations. That would reduce number of evaluations to (1 - 0.7 ) *100 *100 * 2.5 ~ 2 hours. For NSGA2 and SPEA2 we have seen around 30% hit ratio due to the configured mutation and crossover values. But caching has improved overall runtimes for simulation.  
 
-2. SCOOP
+* **SCOOP**
 
 SCOOP helped us configure number of workers, so when workers (n) = 100 , 100 evaluations are done at a time. But the prism CLI couldn’t handle 100 requests simultaneously and failed for more than 4-5 workers. We could have added a queue to handle those requests but that would not help improve the runtime. So we went ahead with having multiple machines each running prism CLI.  
 
-3. Nginx and uwsgi 
+* **Nginx and uwsgi** 
 
 To integrate those multiple machines to handle the requests from 100 SCOOP workers we chose HTTP protocol and developed a flask application that used uwsgi to create sockets. The requests were load balanced on these sockets using an NGINX web proxy server. The architecture is as follows - 
 
@@ -248,13 +248,14 @@ To integrate those multiple machines to handle the requests from 100 SCOOP worke
 
 SCOOP workers run the run.py and they send the evaluation requests over HTTP to Nginx proxy which distributes the works across 10 VCL machines running Prism Parser. The response is sent back. We have seen 100*100 evaluations taking less than 15 minutes which initially took 7 hours.  
 
-4. Early termination
+* **Early termination**  
 
 We calculated standard deviation , min , max and average values for each generation. For two subsequent generations, if all of these values are same , we do an early termination. For NSGA2 and SPEA2 we have seen early termination of 25- 45 generations and for GA around 35- 60 Generations.  
 
 ### Results
 
-1. Run times
+* **Run times**  
+
 With the above optimizations we ran the 3 algorithms and following were the run times observed.
 
 NSGA2 - 421.781 seconds ~ 7.03 mins - Early termination at Generation 26.
@@ -263,7 +264,7 @@ GA- 3341.352 seconds ~ 55.6 mins  - Early termination at Generation 37.
 
 NSGA2 and SPEA2 showed significant improvement for evaluation. SCOOP provides map reduce for selection and SPEA2 and NSGA2 better utilizes this. The GA code we wrote used Tournament selection for two children, and mutation and cross over over the children to generate new children in the population. This did not use the SCOOP feature of map reduce.
 
-2. Pareto Frontier
+* **Pareto Frontier**  
 
 ![pareto](./screenshots/pareto.PNG )
 
@@ -271,7 +272,7 @@ When we plot the pareto for time vs utility for all purchase = 1 , we see NSGA2 
 GA needed fine tuning to get better points, but we faced issues with over tuning where after several generations , a single point would dominate the other points.
 
 
-3. Hypervolume, Spread and IGD
+* **Hypervolume, Spread and IGD**  
 
 We used Hypervolume, spread and Inter Generational distance to compare the optimizers we used. Hypervolume is volume inside the pareto frontiers , more the better.  We calculated reference set by aggregating the pareto frontier from the 3 algorithms and taking the best 100 population. Spread and IGD uses this reference set to compare. Spread calculates how distant each point of a population is from its neighbours. The more the spread is, the better spread out the population. IGD is distance between reference set and obtained pareto frontier. Lesser the IGD, the better it is, since more population is in the best set.
 
@@ -282,7 +283,7 @@ In the above graph, NSGA2 had better spread and SPEA2 had better IGD. Infact, SP
 GA had better hypervolume. This may be due to the extraneous points which did not show better curve. As far as spread goes, NSGA2 and SPEA2 had almost similar values , but NSGA2 had better value.
 
 
-4. Stats.py
+* **Stats.py**  
 
 Stats.py was used from Dr. Menzies’s repository to compare the algorithms ,based on each objective. For purchase , all algorithms had median 1 which showed purchases were made and all were in the same rank. For time ,  NSGA2 had a better median , but all algorithms were in the same rank. For utility , SPEA2 showed higher values and GA had similar values and were ranked in same category.
 
